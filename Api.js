@@ -22,28 +22,21 @@ app.post("/api/logs", (req, res) => {
 const modules = {};
 
 app.post("/api/register", (req, res) => {
-    try {
-        const { id, details } = req.body;
-
-        if (id && details) {
-            // Store or update the module details
-            modules[id] = {
-                ...details,
-                lastSeen: new Date().toISOString() // Store the current time as the last seen time
-            };
-            res.status(200).send("Module registered successfully");
-        } else {
-            res.status(400).send("Invalid request: ID and details are required");
-        }
-    } catch (error) {
-        console.error("Error in /api/register:", error);
-        res.status(500).send("Server error");
-    }
+  const { id, details } = req.body;
+  if (id && details) {
+    modules[id] = {
+      ...details,
+      lastSeen: new Date().toISOString(),
+    };
+    res.status(200).send("Module registered successfully");
+  } else {
+    res.status(400).send("Invalid request: ID and details are required");
+  }
 });
 
 // Endpoint to get all registered modules
 app.get("/api/modules", (req, res) => {
-    res.json(modules);
+  res.json(modules);
 });
 
 app.get("/", (req, res) => {

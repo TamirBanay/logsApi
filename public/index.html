@@ -14,9 +14,11 @@
 
     <script>
       document.getElementById("fetchModules").onclick = function () {
+        console.log("Button clicked"); // Debugging line
         fetch("/api/modules")
           .then((response) => response.json())
           .then((data) => {
+            console.log(data); // Debugging line
             const modulesInfo = document.getElementById("modulesInfo");
             modulesInfo.innerHTML = ""; // Clear previous info
             for (const [id, details] of Object.entries(data)) {
