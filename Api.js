@@ -4,7 +4,6 @@ const port = 3000;
 
 // Store logs in memory for this example
 const logs = [];
-let connectedModules = {};
 
 app.use(express.json());
 
@@ -20,14 +19,31 @@ app.post("/api/logs", (req, res) => {
   }
 });
 
+const modules = {};
+
 app.post("/api/register", (req, res) => {
-  const { idTitle, targetCities } = req.body; // Extract idTitle and targetCities from the request body
-  connectedModules[idTitle] = { targetCities, lastSeen: new Date() }; // Save idTitle and targetCities in the connectedModules object
-  res.status(200).send("Module registered");
+    try {
+        const { id, details } = req.body;
+
+        if (id && details) {
+            // Store or update the module details
+            modules[id] = {
+                ...details,
+                lastSeen: new Date().toISOString() // Store the current time as the last seen time
+            };
+            res.status(200).send("Module registered successfully");
+        } else {
+            res.status(400).send("Invalid request: ID and details are required");
+        }
+    } catch (error) {
+        console.error("Error in /api/register:", error);
+        res.status(500).send("Server error");
+    }
 });
 
+// Endpoint to get all registered modules
 app.get("/api/modules", (req, res) => {
-  res.status(200).json(connectedModules);
+    res.json(modules);
 });
 
 app.get("/", (req, res) => {
