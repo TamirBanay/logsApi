@@ -22,16 +22,23 @@ app.post("/api/logs", (req, res) => {
 const modules = {};
 
 app.post("/api/register", (req, res) => {
-  const { id, details } = req.body;
-  if (id && details) {
-    modules[id] = {
-      ...details,
-      lastSeen: new Date().toISOString(),
-    };
-    res.status(200).send("Module registered successfully");
-  } else {
-    res.status(400).send("Invalid request: ID and details are required");
-  }
+    console.log("Received registration request:", req.body); // Log the incoming request
+    const { id, details } = req.body;
+    if (id && details) {
+        modules[id] = {
+            ...details,
+            lastSeen: new Date().toISOString()
+        };
+        console.log("Updated modules:", modules); // Log the updated modules object
+        res.status(200).send("Module registered successfully");
+    } else {
+        res.status(400).send("Invalid request: ID and details are required");
+    }
+});
+
+app.get("/api/modules", (req, res) => {
+    console.log("Sending modules data:", modules); // Log the data being sent
+    res.json(modules);
 });
 
 // Endpoint to get all registered modules
