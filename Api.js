@@ -21,15 +21,16 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, details } = req.body;
-  connectedModules[id] = { ...details, lastSeen: new Date() };
-  res.status(200).send("Module registered");
+    const { id, details } = req.body;
+    connectedModules[id] = { ...details, lastSeen: new Date() };
+    res.status(200).send("Module registered");
 });
 
+
 app.get("/api/modules", (req, res) => {
-  console.log("Sending modules data:", modules); // Log the data being sent
-  res.json(modules);
+    res.status(200).json(connectedModules);
 });
+
 
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
