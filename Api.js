@@ -201,7 +201,6 @@ app.get("/logs", (req, res) => {
 
 // ... (other app configurations)
 
-// Endpoint to ping all registered modules
 app.get("/ping", (req, res) => {
   let htmlContent = `
     <!DOCTYPE html>
@@ -226,8 +225,11 @@ app.get("/ping", (req, res) => {
         <div id="pingResults"></div>
 
         <script>
+            const connectedModules = ${JSON.stringify(
+              connectedModules
+            )}; // Pass the server-side connectedModules to the client-side
+
             document.getElementById('pingModules').onclick = function() {
-                // Assuming you have an array or object of module URLs/IDs
                 Object.keys(connectedModules).forEach(moduleId => {
                     fetch(connectedModules[moduleId].pingEndpoint)
                         .then(response => response.json())
@@ -252,8 +254,6 @@ app.get("/ping", (req, res) => {
     `;
   res.send(htmlContent);
 });
-
-
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
