@@ -84,6 +84,21 @@ app.get("/", (req, res) => {
             .back-button:hover {
                 background-color: #0056b3;
             }
+            #fetchModules {
+                padding: 10px 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.2s;
+              }
+        
+              #fetchModules:hover {
+                background-color: #0056b3;
+              }
+
         </style>
     </head>
     <body>
