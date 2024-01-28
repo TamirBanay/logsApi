@@ -103,14 +103,46 @@ app.get("/", (req, res) => {
 
 app.get("/logs", (req, res) => {
   console.log("Logs endpoint accessed");
-  let html = `<html><head><title>Logs</title></head><body>`;
-  html += `<h1>Logs</h1>`;
-  html += `<ul>`;
+  let html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Logs</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+                color: #333;
+            }
+            h1 {
+                text-align: center;
+            }
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            li {
+                background-color: #fff;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Logs</h1>
+        <ul>`;
   logs.forEach((log) => {
-    html += `<li>${JSON.stringify(log)}</li>`;
+    html += `<li>${JSON.stringify(log, null, 2)}</li>`; // pretty-print the JSON
   });
-  html += `</ul>`;
-  html += `</body></html>`;
+  html += `</ul>
+    </body>
+    </html>`;
   res.send(html);
 });
 
