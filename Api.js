@@ -20,21 +20,9 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  try {
-    const { id } = req.body;
-    if (id) {
-      // Store or update the module details
-      connectedModules[id] = {
-        lastSeen: new Date().toISOString(), // Store the current time as the last seen time
-      };
-      res.status(200).send("Module registered successfully");
-    } else {
-      res.status(400).send("Invalid request: ID is required");
-    }
-  } catch (error) {
-    console.error("Error in /api/register:", error);
-    res.status(500).send("Server error");
-  }
+  const { id, pingEndpoint } = req.body;
+  connectedModules[id] = { pingEndpoint, lastSeen: new Date() };
+  res.status(200).send("Module registered");
 });
 
 app.get("/api/modules", (req, res) => {
@@ -199,54 +187,75 @@ app.get("/logs", (req, res) => {
   res.send(html);
 });
 
+app.get("/api/ping-modules", async (req, res) => {
+  const pingPromises = Object.entries(connectedModules).map(
+    async ([id, { pingEndpoint }]) => {
+      try {
+        const pingResponse = await axios.get(pingEndpoint); // Using axios for HTTP requests
+        connectedModules[id].lastSeen = new Date(); // Update last seen if ping is successful
+        return { id, status: pingResponse.status };
+      } catch (error) {
+        console.error(`Error pinging module ${id}:`, error);
+        return { id, status: "error" };
+      }
+    }
+  );
+
+  const pingResults = await Promise.all(pingPromises);
+  res.json(pingResults);
+});
+
 app.get("/ping", (req, res) => {
-  const htmlContent = `
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Module Ping</title>
-      <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          #pingResults div { margin-top: 5px; padding: 10px; background: #e0e0e0; }
-      </style>
-  </head>
-  <body>
-      <h1>Ping Modules</h1>
-      <button id="pingModules">Ping All Modules</button>
-      <div id="pingResults"></div>
-      <script>
-          document.getElementById('pingModules').onclick = function() {
-              // Assuming 'connectedModules' is an object containing module IDs and their ping endpoints
-              const requests = Object.entries(connectedModules).map(([moduleId, moduleData]) => {
-                  return fetch(moduleData.pingEndpoint)
-                      .then(response => {
-                          if (!response.ok) throw new Error('No response');
-                          return response.json();
-                      })
-                      .then(data => {
-                          return { id: moduleId, status: data.status };
-                      })
-                      .catch(error => {
-                          return { id: moduleId, status: 'Offline' };
-                      });
-              });
-  
-              Promise.all(requests).then(results => {
-                  const pingResultsDiv = document.getElementById('pingResults');
-                  pingResultsDiv.innerHTML = ''; // Clear previous results
-                  results.forEach(result => {
-                      const resultDiv = document.createElement('div');
-                      resultDiv.textContent = 'Module ' + result.id + ': ' + result.status;
-                      pingResultsDiv.appendChild(resultDiv);
-                  });
-              });
-          };
-      </script>
-  </body>
-  </html>
+  let htmlContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ping Modules</title>
+        <style>
+            /* Add your styles here */
+            #results {
+                margin-top: 20px;
+                padding: 10px;
+                background: #e0e0e0;
+                border-radius: 5px;
+            }
+            button {
+                padding: 10px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Ping Modules</h1>
+        <button id="pingModules">Ping All Modules</button>
+        <div id="results"></div>
+
+        <script>
+        document.getElementById('pingModules').addEventListener('click', async () => {
+            // Clear previous results
+            document.getElementById('results').innerHTML = 'Pinging modules...';
+            
+            // Fetch the ping results from the server
+            const response = await fetch('/api/ping-modules');
+            const results = await response.json();
+            
+            // Display the results
+            document.getElementById('results').innerHTML = '<pre>' + JSON.stringify(results, null, 2) + '</pre>';
+        });
+        </script>
+    </body>
+    </html>
     `;
+
   res.send(htmlContent);
 });
 
