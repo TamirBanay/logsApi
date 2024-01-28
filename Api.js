@@ -199,6 +199,62 @@ app.get("/logs", (req, res) => {
   res.send(html);
 });
 
+// ... (other app configurations)
+
+// Endpoint to ping all registered modules
+app.get("/ping", (req, res) => {
+  let htmlContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Module Ping</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: #f4f4f4;
+            }
+            /* Add more styles as needed */
+        </style>
+    </head>
+    <body>
+        <h1>Ping Modules</h1>
+        <button id="pingModules">Ping All Modules</button>
+        <div id="pingResults"></div>
+
+        <script>
+            document.getElementById('pingModules').onclick = function() {
+                // Assuming you have an array or object of module URLs/IDs
+                Object.keys(connectedModules).forEach(moduleId => {
+                    fetch(connectedModules[moduleId].pingEndpoint)
+                        .then(response => response.json())
+                        .then(data => {
+                            const pingResults = document.getElementById('pingResults');
+                            const resultDiv = document.createElement('div');
+                            resultDiv.innerHTML = 'Module ' + moduleId + ': ' + data.status;
+                            pingResults.appendChild(resultDiv);
+                        })
+                        .catch(error => {
+                            const pingResults = document.getElementById('pingResults');
+                            const resultDiv = document.createElement('div');
+                            resultDiv.innerHTML = 'Module ' + moduleId + ': Error pinging';
+                            pingResults.appendChild(resultDiv);
+                            console.error('Error pinging module:', moduleId, error);
+                        });
+                });
+            };
+        </script>
+    </body>
+    </html>
+    `;
+  res.send(htmlContent);
+});
+
+
+
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
