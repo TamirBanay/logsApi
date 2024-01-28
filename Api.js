@@ -187,36 +187,6 @@ app.get("/logs", (req, res) => {
   res.send(html);
 });
 
-app.get("/api/ping-modules", async (req, res) => {
-  const pingPromises = [];
-  const activeModules = {};
-
-  // Iterate over the connected modules and ping them
-  for (const [id, details] of Object.entries(connectedModules)) {
-    const pingEndpoint = details.pingEndpoint; // Ensure that this is the correct URL to your module
-    const pingPromise = axios
-      .get(`http://${pingEndpoint}/ping`)
-      .then((response) => {
-        if (response.data === "pong") {
-          // If the module responded with 'pong', consider it active
-          activeModules[id] = { ...details, lastSeen: new Date() }; // Update lastSeen
-        }
-      })
-      .catch((error) => {
-        // Log the error if a module doesn't respond or there's a network issue
-        console.error(`Error pinging module ${id}:`, error.message);
-      });
-
-    pingPromises.push(pingPromise);
-  }
-
-  // Wait for all the ping requests to complete
-  await Promise.all(pingPromises);
-
-  // Send back the list of modules that responded to the ping
-  res.status(200).json(activeModules);
-});
-
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
