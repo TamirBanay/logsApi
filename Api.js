@@ -32,9 +32,7 @@ app.get("/api/modules", (req, res) => {
 });
 
 
-app.get("/api/modules", (req, res) => {
-  res.status(200).json(connectedModules);
-});
+
 
 app.get("/", (req, res) => {
   let html = `
