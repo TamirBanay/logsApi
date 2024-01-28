@@ -47,6 +47,8 @@ app.get("/", (req, res) => {
     <!DOCTYPE html>
     <html lang='en'>
     <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Module Details</title>
         <style>
             /* Add some basic styling */
@@ -66,12 +68,29 @@ app.get("/", (req, res) => {
                 border-radius: 5px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
+            .back-button {
+                display: block;
+                width: 150px;
+                margin: 20px auto;
+                padding: 10px;
+                text-align: center;
+                background-color: #007bff;
+                color: #ffffff;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .back-button:hover {
+                background-color: #0056b3;
+            }
         </style>
     </head>
     <body>
         <h1>Connected Modules</h1>
         <button id="fetchModules">Get Connected Modules</button>
         <div id="modulesInfo"></div>
+        <a href="/logs" class="back-button">See Logs</a>
 
         <script>
             document.getElementById('fetchModules').onclick = function() {
@@ -132,10 +151,29 @@ app.get("/logs", (req, res) => {
                 border-radius: 5px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
+            .back-button {
+                display: block;
+                width: 150px;
+                margin: 20px auto;
+                padding: 10px;
+                text-align: center;
+                background-color: #007bff;
+                color: #ffffff;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .back-button:hover {
+                background-color: #0056b3;
+            }
+
         </style>
     </head>
     <body>
         <h1>Logs</h1>
+        <a href="/" class="back-button">Back to Home</a>
+
         <ul>`;
   logs.forEach((log) => {
     html += `<li>${JSON.stringify(log, null, 2)}</li>`; // pretty-print the JSON
