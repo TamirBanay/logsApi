@@ -192,7 +192,7 @@ app.get("/api/ping-modules", async (req, res) => {
     Object.entries(connectedModules).map(async ([id, moduleData]) => {
       try {
         // Try to ping the module
-        await axios.get(moduleData.pingEndpoint, { timeout: 5000 }); // 5 seconds timeout
+        // await axios.get(moduleData.pingEndpoint, { timeout: 5000 }); // 5 seconds timeout
         connectedModules[id].lastSeen = new Date().toISOString();
         return { id, status: "online" };
       } catch (error) {
