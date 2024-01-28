@@ -188,21 +188,22 @@ app.get("/logs", (req, res) => {
 });
 
 app.get("/api/ping-modules", async (req, res) => {
-  const pingPromises = Object.entries(connectedModules).map(
-    async ([id, { pingEndpoint }]) => {
+  const results = await Promise.all(
+    Object.entries(connectedModules).map(async ([id, moduleData]) => {
       try {
-        const pingResponse = await axios.get(pingEndpoint); // Using axios for HTTP requests
-        connectedModules[id].lastSeen = new Date(); // Update last seen if ping is successful
-        return { id, status: pingResponse.status };
+        // Try to ping the module
+        await axios.get(moduleData.pingEndpoint, { timeout: 5000 }); // 5 seconds timeout
+        connectedModules[id].lastSeen = new Date().toISOString();
+        return { id, status: "online" };
       } catch (error) {
-        console.error(`Error pinging module ${id}:`, error);
-        return { id, status: "error" };
+        // If the ping fails, mark the module as offline
+        delete connectedModules[id];
+        return { id, status: "offline" };
       }
-    }
+    })
   );
 
-  const pingResults = await Promise.all(pingPromises);
-  res.json(pingResults);
+  res.json(results);
 });
 
 app.get("/ping", (req, res) => {
