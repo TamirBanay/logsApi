@@ -202,70 +202,70 @@ app.get("/logs", (req, res) => {
 app.get("/ping", (req, res) => {
   // Assume connectedModules is a global or higher scope variable that contains the modules' data
   let htmlContent = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Module Ping</title>
-          <style>
-              body {
-                  font-family: Arial, sans-serif;
-                  margin: 0;
-                  padding: 20px;
-                  background: #f4f4f4;
-              }
-              /* Add more styles as needed */
-              #pingResults div {
-                  margin-top: 5px;
-                  padding: 10px;
-                  background: #e0e0e0;
-                  border-radius: 5px;
-              }
-          </style>
-      </head>
-      <body>
-          <h1>Ping Modules</h1>
-          <button id="pingModules">Ping All Modules</button>
-          <div id="pingResults"></div>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Module Ping</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+              background: #f4f4f4;
+          }
+          #pingResults div {
+              margin-top: 5px;
+              padding: 10px;
+              background: #e0e0e0;
+              border-radius: 5px;
+          }
+      </style>
+  </head>
+  <body>
+      <h1>Ping Modules</h1>
+      <button id="pingModules">Ping All Modules</button>
+      <div id="pingResults"></div>
   
-          <script>
-          // Convert the server-side connectedModules object to JSON and assign it to a client-side JavaScript variable
-          const connectedModules = ${JSON.stringify(connectedModules || {})};
+      <script>
+      const connectedModules = ${JSON.stringify(connectedModules || {})};
   
-          document.getElementById('pingModules').onclick = function() {
-              Object.keys(connectedModules).forEach(moduleId => {
-                  const moduleData = connectedModules[moduleId];
-                  if (moduleData && moduleData.pingEndpoint) {
-                      fetch(moduleData.pingEndpoint)
-                          .then(response => {
-                              if (!response.ok) {
-                                  throw new Error('Network response was not ok');
-                              }
-                              return response.json();
-                          })
-                          .then(data => {
-                              const pingResults = document.getElementById('pingResults');
-                              const resultDiv = document.createElement('div');
-                              resultDiv.innerHTML = 'Module ' + moduleId + ': ' + data.status;
-                              pingResults.appendChild(resultDiv);
-                          })
-                          .catch(error => {
-                              const pingResults = document.getElementById('pingResults');
-                              const resultDiv = document.createElement('div');
-                              resultDiv.innerHTML = 'Module ' + moduleId + ': Error pinging (' + error.message + ')';
-                              pingResults.appendChild(resultDiv);
-                              console.error('Error pinging module:', moduleId, error);
-                          });
-                  } else {
-                      console.log('Ping endpoint not defined for module:', moduleId);
-                  }
-              });
-          };
-          </script>
-      </body>
-      </html>
-      `;
+      document.getElementById('pingModules').onclick = function() {
+          Object.keys(connectedModules).forEach(moduleId => {
+              const moduleData = connectedModules[moduleId];
+              if (moduleData && moduleData.pingEndpoint) {
+                  fetch(moduleData.pingEndpoint)
+                      .then(response => {
+                          if (!response.ok) {
+                              throw new Error('Network response was not ok');
+                          }
+                          return response.text(); // Change this if your endpoint returns JSON
+                      })
+                      .then(pingMessage => {
+                          const pingResults = document.getElementById('pingResults');
+                          const resultDiv = document.createElement('div');
+                          resultDiv.innerHTML = 'Module ' + moduleId + ': ' + pingMessage;
+                          pingResults.appendChild(resultDiv);
+                      })
+                      .catch(error => {
+                          const pingResults = document.getElementById('pingResults');
+                          const resultDiv = document.createElement('div');
+                          resultDiv.innerHTML = 'Module ' + moduleId + ': Error pinging (' + error.message + ')';
+                          pingResults.appendChild(resultDiv);
+                      });
+              } else {
+                  const pingResults = document.getElementById('pingResults');
+                  const resultDiv = document.createElement('div');
+                  resultDiv.innerHTML = 'Module ' + moduleId + ': Ping endpoint not defined';
+                  pingResults.appendChild(resultDiv);
+              }
+          });
+      };
+      </script>
+  </body>
+  </html>
+    `;
   res.send(htmlContent);
 });
 
