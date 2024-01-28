@@ -21,46 +21,85 @@ app.post("/api/logs", (req, res) => {
 
 app.post("/api/register", (req, res) => {
   try {
-    console.log("Register request received:", req.body);
-    const { id, details } = req.body;
-    connectedModules[id] = { ...details, lastSeen: new Date() };
-    console.log("Module registered:", id);
-    res.status(200).send("Module registered");
+    const { id } = req.body;
+    if (id) {
+      // Store or update the module details
+      connectedModules[id] = {
+        lastSeen: new Date().toISOString(), // Store the current time as the last seen time
+      };
+      res.status(200).send("Module registered successfully");
+    } else {
+      res.status(400).send("Invalid request: ID is required");
+    }
   } catch (error) {
-    console.error("Error handling /api/register:", error);
+    console.error("Error in /api/register:", error);
     res.status(500).send("Server error");
   }
 });
 
 app.get("/api/modules", (req, res) => {
-  console.log("Sending connected modules data");
   res.status(200).json(connectedModules);
 });
 
 app.get("/", (req, res) => {
   console.log("Root endpoint accessed");
   let html = `
-    <!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <title>Module Details</title>
-    </head>
-    <body>
-        <button id="fetchModules">Get Connected Modules</button>
-        <div id="modulesInfo"></div>
-
-        <script>
-            document.getElementById('fetchModules').onclick = function() {
-                fetch('/api/modules')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('modulesInfo').innerHTML = JSON.stringify(data, null, 2);
-                    });
-            };
-        </script>
-    </body>
-    </html>
-    `;
+      <!DOCTYPE html>
+      <html lang='en'>
+      <head>
+          <title>Module Details</title>
+          <style>
+              /* Add some basic styling */
+              body {
+                  font-family: Arial, sans-serif;
+                  margin: 0;
+                  padding: 20px;
+                  background: #f4f4f4;
+              }
+              #modulesInfo {
+                  margin-top: 20px;
+              }
+              .module {
+                  background: #fff;
+                  padding: 10px;
+                  margin-bottom: 10px;
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              }
+          </style>
+      </head>
+      <body>
+          <h1>Connected Modules</h1>
+          <button id="fetchModules">Get Connected Modules</button>
+          <div id="modulesInfo"></div>
+  
+          <script>
+              document.getElementById('fetchModules').onclick = function() {
+                  fetch('/api/modules')
+                      .then(response => response.json())
+                      .then(data => {
+                          const modulesInfo = document.getElementById('modulesInfo');
+                          modulesInfo.innerHTML = ''; // Clear previous content
+  
+                          for (const [id, details] of Object.entries(data)) {
+                              const moduleDiv = document.createElement('div');
+                              moduleDiv.classList.add('module');
+                              moduleDiv.innerHTML = ``<strong>Module ID:</strong> ${id}<br />``<strong>Last Seen:</strong> ${new Date(
+    details.lastSeen
+  ).toLocaleString()};
+                              modulesInfo.appendChild(moduleDiv);
+                          }
+                      })
+                      .catch(error => {
+                          console.error('Error fetching modules:', error);
+                          const modulesInfo = document.getElementById('modulesInfo');
+                          modulesInfo.innerHTML = 'Error fetching modules. Check console for details.';
+                      });
+              };
+          </script>
+      </body>
+      </html>
+      `;
   res.send(html);
 });
 
