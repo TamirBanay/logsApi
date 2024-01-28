@@ -11,7 +11,6 @@ app.use(express.json());
 app.post("/api/logs", (req, res) => {
   try {
     console.log("Log received:", req.body);
-    // Add the log message to the logs array
     logs.push(req.body);
     res.status(200).send("Log received");
   } catch (error) {
@@ -21,20 +20,25 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
+  try {
+    console.log("Register request received:", req.body);
     const { id, details } = req.body;
     connectedModules[id] = { ...details, lastSeen: new Date() };
+    console.log("Module registered:", id);
     res.status(200).send("Module registered");
+  } catch (error) {
+    console.error("Error handling /api/register:", error);
+    res.status(500).send("Server error");
+  }
 });
-
 
 app.get("/api/modules", (req, res) => {
-    res.status(200).json(connectedModules);
+  console.log("Sending connected modules data");
+  res.status(200).json(connectedModules);
 });
 
-
-
-
 app.get("/", (req, res) => {
+  console.log("Root endpoint accessed");
   let html = `
     <!DOCTYPE html>
     <html lang='en'>
@@ -60,15 +64,11 @@ app.get("/", (req, res) => {
   res.send(html);
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
-
 app.get("/logs", (req, res) => {
+  console.log("Logs endpoint accessed");
   let html = `<html><head><title>Logs</title></head><body>`;
   html += `<h1>Logs</h1>`;
   html += `<ul>`;
-  // Add each log to the HTML as a list item
   logs.forEach((log) => {
     html += `<li>${JSON.stringify(log)}</li>`;
   });
