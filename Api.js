@@ -257,7 +257,7 @@ app.get("/ping", (req, res) => {
               } else {
                   const pingResults = document.getElementById('pingResults');
                   const resultDiv = document.createElement('div');
-                  resultDiv.innerHTML = 'Module ' + moduleId + ': Ping endpoint not defined';
+                  resultDiv.innerHTML = 'Module: ' + moduleId ;
                   pingResults.appendChild(resultDiv);
               }
           });
