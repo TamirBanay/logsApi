@@ -21,8 +21,8 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, details } = req.body;
-  connectedModules[id] = { ...details, lastSeen: new Date() };
+  const { idTitle, targetCities } = req.body; // Extract idTitle and targetCities from the request body
+  connectedModules[idTitle] = { targetCities, lastSeen: new Date() }; // Save idTitle and targetCities in the connectedModules object
   res.status(200).send("Module registered");
 });
 
@@ -31,29 +31,7 @@ app.get("/api/modules", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  let html = `
-    <!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <title>Module Details</title>
-    </head>
-    <body>
-        <button id="fetchModules">Get Connected Modules</button>
-        <div id="modulesInfo"></div>
-
-        <script>
-            document.getElementById('fetchModules').onclick = function() {
-                fetch('/api/modules')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('modulesInfo').innerHTML = JSON.stringify(data, null, 2);
-                    });
-            };
-        </script>
-    </body>
-    </html>
-    `;
-  res.send(html);
+  res.sendFile(__dirname + "/public/index.html"); // assuming your HTML file is in 'public' directory.
 });
 
 app.get("/logs", (req, res) => {

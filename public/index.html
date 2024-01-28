@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module Details</title>
+    <style>
+      /* Add your styles here */
+    </style>
+  </head>
+  <body>
+    <button id="fetchModules">Get Connected Modules</button>
+    <div id="modulesInfo"></div>
+
+    <script>
+      document.getElementById("fetchModules").onclick = function () {
+        fetch("/api/modules")
+          .then((response) => response.json())
+          .then((data) => {
+            const modulesInfo = document.getElementById("modulesInfo");
+            modulesInfo.innerHTML = ""; // Clear previous info
+            for (const [id, details] of Object.entries(data)) {
+              const div = document.createElement("div");
+              div.innerHTML = `<strong>Module ID:</strong> ${id}<br/><strong>Details:</strong> ${
+                details.info
+              }<br/><strong>Last Seen:</strong> ${new Date(
+                details.lastSeen
+              ).toLocaleString()}`;
+              modulesInfo.appendChild(div);
+            }
+          });
+      };
+    </script>
+  </body>
+</html>
