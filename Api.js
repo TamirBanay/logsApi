@@ -192,12 +192,10 @@ app.get("/logs", (req, res) => {
 
 // Add a new POST endpoint to handle pings
 app.post("/api/ping", (req, res) => {
+  console.log(`Received ping request for module ID: ${req.body.id}`);
   const { id } = req.body;
   if (connectedModules[id]) {
-    // Construct your ping logic here, for example:
-    // You might send a request to the module's pingEndpoint
     console.log(`Pinging module with ID: ${id}`);
-    // Simulate a ping for demonstration
     res.status(200).send(`Ping sent to module ${id}`);
   } else {
     res.status(404).send(`Module with ID ${id} not found`);
