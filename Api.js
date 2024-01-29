@@ -26,15 +26,18 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, pingEndpoint } = req.body;
+  const { id, macAddress, pingEndpoint } = req.body;
   if (!connectedModules[id]) {
-    connectedModules[id] = { pingEndpoint, lastSeen: new Date() };
+    connectedModules[id] = { macAddress, pingEndpoint, lastSeen: new Date() };
     res.status(200).send("Module registered successfully.");
   } else {
     connectedModules[id].lastSeen = new Date(); // Update last seen if already registered
+    connectedModules[id].pingEndpoint = pingEndpoint; // Make sure to update the pingEndpoint
     res
       .status(200)
-      .send("Module already registered. Updated 'last seen' timestamp.");
+      .send(
+        "Module already registered. Updated 'last seen' and 'ping endpoint'."
+      );
   }
 });
 
