@@ -252,8 +252,9 @@ document.getElementById('pingButton').onclick = function() {
     })
     .catch(error => {
         console.error('Error pinging the module:', error);
-        alert('Error pinging the module: ' + error.message);
+        alert('Error pinging the module: ' + (error.message || "Unknown error"));
     });
+    
 };                }
                 return response.text();
             })
