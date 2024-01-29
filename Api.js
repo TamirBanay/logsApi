@@ -252,70 +252,70 @@ app.get("/ping", (req, res) => {
   res.send(html);
 });
 
-app.get("/ping", (req, res) => {
-  let html = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Ping Module</title>
-            <style>
-                /* Basic styling */
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 20px;
-                    background: #f4f4f4;
-                }
-                button {
-                    padding: 10px 15px;
-                    background-color: #007bff;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-size: 16px;
-                    transition: background-color 0.2s;
-                }
-                button:hover {
-                    background-color: #0056b3;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>Ping Module</h1>
-            <input type="text" id="moduleIdInput" placeholder="Enter Module ID" />
-            <button id="pingButton">Ping Module</button>
-           <script>
-    document.getElementById('pingButton').onclick = function() {
-        var esp32IpAddress = document.getElementById('moduleIdInput').value;
-        fetch('/api/ping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: esp32IpAddress })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(\`HTTP error! status: ${response.status}\`);
-            }
-            return response.text(); // Use text() instead of json() if the response is not in JSON format
-        })
-        .then(data => {
-            alert(data); // Display the server response
-        })
-        .catch(error => {
-            console.error('Error pinging the ESP32:', error);
-            alert('Error pinging the ESP32: ' + error.message);
-        });
-    };
-</script>
+// app.get("/ping", (req, res) => {
+//   let html = `
+//         <!DOCTYPE html>
+//         <html lang="en">
+//         <head>
+//             <meta charset="UTF-8">
+//             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//             <title>Ping Module</title>
+//             <style>
+//                 /* Basic styling */
+//                 body {
+//                     font-family: Arial, sans-serif;
+//                     margin: 0;
+//                     padding: 20px;
+//                     background: #f4f4f4;
+//                 }
+//                 button {
+//                     padding: 10px 15px;
+//                     background-color: #007bff;
+//                     color: white;
+//                     border: none;
+//                     border-radius: 5px;
+//                     cursor: pointer;
+//                     font-size: 16px;
+//                     transition: background-color 0.2s;
+//                 }
+//                 button:hover {
+//                     background-color: #0056b3;
+//                 }
+//             </style>
+//         </head>
+//         <body>
+//             <h1>Ping Module</h1>
+//             <input type="text" id="moduleIdInput" placeholder="Enter Module ID" />
+//             <button id="pingButton">Ping Module</button>
+//            <script>
+//     document.getElementById('pingButton').onclick = function() {
+//         var esp32IpAddress = document.getElementById('moduleIdInput').value;
+//         fetch('/api/ping', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ id: esp32IpAddress })
+//         })
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(\`HTTP error! status: ${response.status}\`);
+//             }
+//             return response.text(); // Use text() instead of json() if the response is not in JSON format
+//         })
+//         .then(data => {
+//             alert(data); // Display the server response
+//         })
+//         .catch(error => {
+//             console.error('Error pinging the ESP32:', error);
+//             alert('Error pinging the ESP32: ' + error.message);
+//         });
+//     };
+// </script>
 
-        </body>
-        </html>
-        `;
-  res.send(html);
-});
+//         </body>
+//         </html>
+//         `;
+//   res.send(html);
+// });
 
 app.post("/api/ping", (req, res) => {
   const { id } = req.body; // assuming 'id' is the IP address of the ESP32
