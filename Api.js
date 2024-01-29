@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const cors = require("cors");
-const cors = require("cors");
 app.use(
   cors({
     origin: "https://logs-foem.onrender.com/", // replace with your frontend's domain
