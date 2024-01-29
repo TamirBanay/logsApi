@@ -27,8 +27,15 @@ app.post("/api/logs", (req, res) => {
 
 app.post("/api/register", (req, res) => {
   const { id, pingEndpoint } = req.body;
-  connectedModules[id] = { pingEndpoint, lastSeen: new Date() };
-  res.status(200).send("Module registered");
+  if (!connectedModules[id]) {
+    connectedModules[id] = { pingEndpoint, lastSeen: new Date() };
+    res.status(200).send("Module registered successfully.");
+  } else {
+    connectedModules[id].lastSeen = new Date(); // Update last seen if already registered
+    res
+      .status(200)
+      .send("Module already registered. Updated 'last seen' timestamp.");
+  }
 });
 
 app.get("/api/modules", (req, res) => {
@@ -96,34 +103,38 @@ app.get("/", (req, res) => {
         </style>
     </head>
     <body>
-        <h1>Connected Modules</h1>
-        <button id="fetchModules">Get Connected Modules</button>
-        <div id="modulesInfo"></div>
-        <a href="/logs" class="back-button">See Logs</a>
+    <h1>Connected Modules</h1>
+    <button id="fetchModules">Get Connected Modules</button>
+    <div id="modulesInfo"></div>
+    <a href="/logs" class="back-button">See Logs</a>
 
-        <script>
-            document.getElementById('fetchModules').onclick = function() {
-                fetch('/api/modules')
-                    .then(response => response.json())
-                    .then(data => {
-                        const modulesInfo = document.getElementById('modulesInfo');
-                        modulesInfo.innerHTML = ''; // Clear previous content
+    <script>
+        document.getElementById('fetchModules').onclick = function() {
+            fetch('/api/modules')
+                .then(response => response.json())
+                .then(data => {
+                    const modulesInfo = document.getElementById('modulesInfo');
+                    modulesInfo.innerHTML = ''; // Clear previous content
 
-                        for (const [id, details] of Object.entries(data)) {
-                            const moduleDiv = document.createElement('div');
-                            moduleDiv.classList.add('module');
-                            moduleDiv.innerHTML = \`<strong>Module ID:</strong> \${id}<br /><strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}\`;
-                            modulesInfo.appendChild(moduleDiv);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching modules:', error);
-                        const modulesInfo = document.getElementById('modulesInfo');
-                        modulesInfo.innerHTML = 'Error fetching modules. Check console for details.';
-                    });
-            };
-        </script>
-    </body>
+                    for (const [id, details] of Object.entries(data)) {
+                        const moduleDiv = document.createElement('div');
+                        moduleDiv.classList.add('module');
+                        moduleDiv.innerHTML = \`
+                            <strong>Module ID:</strong> \${id}<br />
+                            <strong>Ping Endpoint:</strong> \${details.pingEndpoint || 'Not Available'}<br />
+                            <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
+                        \`;
+                        modulesInfo.appendChild(moduleDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching modules:', error);
+                    const modulesInfo = document.getElementById('modulesInfo');
+                    modulesInfo.innerHTML = 'Error fetching modules. Check console for details.';
+                });
+        };
+    </script>
+</body>
     </html>
     `;
   res.send(html);
