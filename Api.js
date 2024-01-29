@@ -252,7 +252,7 @@ app.get("/ping", (req, res) => {
   res.send(html);
 });
 
-app.get("http:/10.0.0.18/ping", (req, res) => {
+app.get("http://10.0.0.18/ping", (req, res) => {
   let html = `
         <!DOCTYPE html>
         <html lang="en">
