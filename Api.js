@@ -319,8 +319,6 @@ app.get("/ping", (req, res) => {
 app.post("/api/ping", (req, res) => {
   const { id } = req.body;
   console.log(`Received ping request for module ID: ${id}`);
-  console.log("Connected Modules: ", connectedModules);
-
   if (connectedModules[id]) {
     console.log(`Pinging module with ID: ${id}`);
     // Your ping logic here
