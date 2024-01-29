@@ -121,6 +121,37 @@ app.get("/", (req, res) => {
                       });
               };
           </script>
+
+          
+          <input type="text" id="ipInput" placeholder="Enter ESP32 IP address"/>
+          <button id="testButton">Test LED</button>
+
+          <script>
+              document.getElementById('testButton').onclick = function() {
+                  var ip = document.getElementById('ipInput').value;
+                  if(ip) {
+                      fetch('/api/test', { 
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ ip: ip })
+                      })
+                      .then(response => {
+                          if(response.ok) {
+                              console.log("LED should be now on.");
+                          } else {
+                              console.error('Server responded with status ' + response.status);
+                          }
+                      })
+                      .catch(error => {
+                          console.error('Error:', error);
+                      });
+                  } else {
+                      alert('Please enter the IP address.');
+                  }
+              };
+          </script>
       </body>
       </html>
       `;
@@ -189,6 +220,44 @@ app.get("/logs", (req, res) => {
     </body>
     </html>`;
   res.send(html);
+});
+const axios = require("axios"); // Ensure you have this at the top of your file
+
+app.post("/api/test", (req, res) => {
+  const ipAddress = req.body.ip;
+  console.log("Received IP: ", ipAddress); // Log the received IP address
+  if (!ipAddress) {
+    return res.status(400).send("IP address is required");
+  }
+
+  console.log(
+    "Test endpoint hit, triggering LED on the module with IP: " + ipAddress
+  );
+
+  // The axios call should be within the scope of the route handler
+  axios
+    .post(`http://${ipAddress}/trigger-led`)
+    .then((response) => {
+      console.log("LED should be now on.");
+      res.status(200).send("Triggered LED successfully.");
+    })
+    .catch((error) => {
+      console.error("Error triggering LED:", error.message);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
+      }
+      res.status(500).send("Error triggering LED");
+    });
 });
 
 app.listen(port, () => {
