@@ -196,7 +196,6 @@ app.get("/logs", (req, res) => {
     </html>`;
   res.send(html);
 });
-
 app.get("/ping", (req, res) => {
   let html = `
       <!DOCTYPE html>
@@ -263,29 +262,39 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/api/ping", (req, res) => {
-  const { id } = req.body; // 'id' should be the publicly accessible address of the ESP32
+  const { id } = req.body; // 'id' is the identifier of the module
 
-  console.log(`Attempting to ping ESP32 at: ${id}`);
+  if (!connectedModules[id]) {
+    return res.status(404).send("Module not found");
+  }
 
-  fetch(`http://${id}/ping`, {
-    // Change 'http' to 'https' if the ESP32 is accessible via HTTPS
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: "Ping from server" }),
-  })
-    .then((espRes) => {
-      if (!espRes.ok) {
-        throw new Error(`ESP32 responded with status: ${espRes.status}`);
+  // Assuming 'pingEndpoint' stores the URL or IP address to ping the module
+  const pingUrl = connectedModules[id].pingEndpoint;
+
+  if (!pingUrl) {
+    return res.status(404).send("Ping endpoint for module not found");
+  }
+
+  console.log(`Attempting to ping module at: ${pingUrl}`);
+
+  // Here you would send a GET request to the module's ping URL
+  // Adjust if your module expects a POST request or different endpoint
+  fetch(pingUrl)
+    .then((moduleResponse) => {
+      if (!moduleResponse.ok) {
+        throw new Error(
+          `Module responded with status: ${moduleResponse.status}`
+        );
       }
-      return espRes.text();
+      return moduleResponse.text();
     })
-    .then((espResBody) => {
-      console.log(`ESP32 response: ${espResBody}`);
-      res.status(200).send(`Ping sent to ESP32 at ${id}`);
+    .then((moduleResponseText) => {
+      console.log(`Module response: ${moduleResponseText}`);
+      res.status(200).send(`Ping response from module: ${moduleResponseText}`);
     })
     .catch((error) => {
-      console.error("Error pinging ESP32:", error);
-      res.status(500).send("Failed to ping ESP32: " + error.message); // Send back the error message
+      console.error("Error pinging module:", error);
+      res.status(500).send("Failed to ping module: " + error.message);
     });
 });
 
