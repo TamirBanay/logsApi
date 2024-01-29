@@ -267,7 +267,19 @@ app.get("/ping", (req, res) => {
   res.send(html);
 });
 
-// Existing server code continues...
+app.post("/api/ping", (req, res) => {
+  const { id } = req.body;
+  console.log(`Received ping request for module ID: ${id}`);
+  if (connectedModules[id]) {
+    console.log(`Pinging module with ID: ${id}`);
+    // Add your logic to ping the actual ESP32 module here.
+    // For example, you might send a HTTP request to the module's stored pingEndpoint.
+    res.status(200).send(`Ping sent to module ${id}`);
+  } else {
+    console.log(`Module with ID ${id} not found in connectedModules`);
+    res.status(404).send(`Module with ID ${id} not found`);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
