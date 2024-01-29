@@ -263,7 +263,7 @@ app.post("/api/ping", (req, res) => {
 
   console.log(`Attempting to ping ESP32 at: ${id}`);
 
-  fetch(`http://${id}/ping`, {
+  fetch(`https://${id}/ping`, {
     // Change 'http' to 'https' if the ESP32 is accessible via HTTPS
     method: "POST",
     headers: { "Content-Type": "application/json" },
