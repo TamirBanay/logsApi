@@ -234,7 +234,7 @@ app.get("/ping", (req, res) => {
           <script>
           document.getElementById('pingButton').onclick = function() {
               var moduleId = document.getElementById('moduleIdInput').value;
-              fetch('/api/ping', {
+              fetch('https://logs-foem.onrender.com/api/ping', { // Make sure this URL is correct
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ id: moduleId })
@@ -242,7 +242,7 @@ app.get("/ping", (req, res) => {
               .then(response => {
                   if (!response.ok) {
                     throw new Error(\`HTTP error! status: \${response.status}\`);
-                }
+                  }
                   return response.text();
               })
               .then(data => {
@@ -253,7 +253,8 @@ app.get("/ping", (req, res) => {
                   alert('Error pinging the module: ' + error.message);
               });
           };
-      </script>
+        </script>
+        
       
       </body>
       </html>
@@ -264,37 +265,32 @@ app.get("/ping", (req, res) => {
 app.post("/api/ping", (req, res) => {
   const { id } = req.body; // 'id' is the identifier of the module
 
-  if (!connectedModules[id]) {
+  // Check if the module is registered in the connectedModules object
+  const moduleInfo = connectedModules[id];
+  if (!moduleInfo) {
     return res.status(404).send("Module not found");
   }
 
-  // Assuming 'pingEndpoint' stores the URL or IP address to ping the module
-  const pingUrl = connectedModules[id].pingEndpoint;
-
-  if (!pingUrl) {
-    return res.status(404).send("Ping endpoint for module not found");
+  // Assuming the module's IP or hostname is stored in moduleInfo
+  const moduleEndpoint = moduleInfo.pingEndpoint;
+  if (!moduleEndpoint) {
+    return res.status(404).send("Module ping endpoint not found");
   }
 
-  console.log(`Attempting to ping module at: ${pingUrl}`);
-
-  // Here you would send a GET request to the module's ping URL
-  // Adjust if your module expects a POST request or different endpoint
-  fetch(pingUrl)
-    .then((moduleResponse) => {
-      if (!moduleResponse.ok) {
-        throw new Error(
-          `Module responded with status: ${moduleResponse.status}`
-        );
+  // Ping the module at the stored endpoint
+  fetch(moduleEndpoint)
+    .then((moduleRes) => {
+      if (!moduleRes.ok) {
+        throw new Error(`Module responded with status: ${moduleRes.status}`);
       }
-      return moduleResponse.text();
+      return moduleRes.text();
     })
-    .then((moduleResponseText) => {
-      console.log(`Module response: ${moduleResponseText}`);
-      res.status(200).send(`Ping response from module: ${moduleResponseText}`);
+    .then((moduleResText) => {
+      res.status(200).send(`Module response: ${moduleResText}`);
     })
     .catch((error) => {
       console.error("Error pinging module:", error);
-      res.status(500).send("Failed to ping module: " + error.message);
+      res.status(500).send(`Failed to ping module: ${error.message}`);
     });
 });
 
