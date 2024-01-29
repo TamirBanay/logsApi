@@ -203,7 +203,6 @@ app.post("/api/ping", (req, res) => {
   }
 });
 
-// Add a new route to serve an HTML page with a ping button
 app.get("/ping", (req, res) => {
   let html = `
       <!DOCTYPE html>
@@ -247,12 +246,18 @@ app.get("/ping", (req, res) => {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ id: moduleId })
                   })
-                  .then(response => response.json())
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error(\`HTTP error! status: \${response.status}\`);
+                      }
+                      return response.text(); // Use text() instead of json() if the response is not in JSON format
+                  })
                   .then(data => {
                       alert(data); // Display the server response
                   })
                   .catch(error => {
                       console.error('Error pinging the module:', error);
+                      alert('Error pinging the module: ' + error.message);
                   });
               };
           </script>
