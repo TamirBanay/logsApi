@@ -2,15 +2,9 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const cors = require("cors");
-app.use(
-  cors({
-    origin: "https://logs-foem.onrender.com/", // replace with your frontend's domain
-  })
-);
-// Store logs in memory for this example
+
 const logs = [];
 let connectedModules = {};
-const fetch = require("node-fetch"); // Make sure to install node-fetch if not already
 
 app.use(express.json());
 
@@ -196,105 +190,7 @@ app.get("/logs", (req, res) => {
     </html>`;
   res.send(html);
 });
-app.get("/ping", (req, res) => {
-  let html = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Ping Module</title>
-          <style>
-              /* Basic styling */
-              body {
-                  font-family: Arial, sans-serif;
-                  margin: 0;
-                  padding: 20px;
-                  background: #f4f4f4;
-              }
-              button {
-                  padding: 10px 15px;
-                  background-color: #007bff;
-                  color: white;
-                  border: none;
-                  border-radius: 5px;
-                  cursor: pointer;
-                  font-size: 16px;
-                  transition: background-color 0.2s;
-              }
-              button:hover {
-                  background-color: #0056b3;
-              }
-          </style>
-      </head>
-      <body>
-          <h1>Ping Module</h1>
-          <input type="text" id="moduleIdInput" placeholder="Enter Module ID" />
-          <button id="pingButton">Ping Module</button>
-          <script>
-          document.getElementById('pingButton').onclick = function() {
-              var moduleId = document.getElementById('moduleIdInput').value;
-              fetch('https://logs-foem.onrender.com/api/ping', { // Make sure this URL is correct
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id: moduleId })
-              })
-              .then(response => {
-                  if (!response.ok) {
-                    throw new Error(\`HTTP error! status: \${response.status}\`);
-                  }
-                  return response.text();
-              })
-              .then(data => {
-                  alert(data);
-              })
-              .catch(error => {
-                  console.error('Error pinging the module:', error);
-                  alert('Error pinging the module: ' + error.message);
-              });
-          };
-        </script>
-        
-      
-      </body>
-      </html>
-      `;
-  res.send(html);
-});
 
-app.post("/api/ping", (req, res) => {
-  const { id } = req.body; // 'id' is the identifier of the module
-
-  // Check if the module is registered in the connectedModules object
-  const moduleInfo = connectedModules[id];
-  if (!moduleInfo) {
-    return res.status(404).send("Module not found");
-  }
-
-  // Assuming the module's IP or hostname is stored in moduleInfo
-  const moduleEndpoint = moduleInfo.pingEndpoint;
-  if (!moduleEndpoint) {
-    return res.status(404).send("Module ping endpoint not found");
-  }
-
-  // Ping the module at the stored endpoint
-  fetch(moduleEndpoint)
-    .then((moduleRes) => {
-      if (!moduleRes.ok) {
-        throw new Error(`Module responded with status: ${moduleRes.status}`);
-      }
-      return moduleRes.text();
-    })
-    .then((moduleResText) => {
-      res.status(200).send(`Module response: ${moduleResText}`);
-    })
-    .catch((error) => {
-      console.error("Error pinging module:", error);
-      res.status(500).send(`Failed to ping module: ${error.message}`);
-    });
-});
-
-const PORT = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
