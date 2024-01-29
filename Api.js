@@ -6,6 +6,7 @@ app.use(cors());
 // Store logs in memory for this example
 const logs = [];
 let connectedModules = {};
+const fetch = require("node-fetch"); // Make sure to install node-fetch if not already
 
 app.use(express.json());
 
@@ -253,11 +254,12 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/api/ping", (req, res) => {
-  const { id } = req.body; // assuming 'id' is the IP address of the ESP32
+  const { id } = req.body; // 'id' should be the publicly accessible address of the ESP32
 
-  console.log(`Attempting to ping ESP32 at IP: ${id}`);
+  console.log(`Attempting to ping ESP32 at: ${id}`);
 
   fetch(`http://${id}/ping`, {
+    // Change 'http' to 'https' if the ESP32 is accessible via HTTPS
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: "Ping from server" }),
