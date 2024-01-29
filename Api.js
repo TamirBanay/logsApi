@@ -226,47 +226,28 @@ app.get("/ping", (req, res) => {
           <button id="pingButton">Ping Module</button>
           <script>
           document.getElementById('pingButton').onclick = function() {
-            var moduleId = document.getElementById('moduleIdInput').value;
-            fetch('/api/ping', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: moduleId })
-            })
-            .then(response => {
-                if (!response.ok) {
-document.getElementById('pingButton').onclick = function() {
-    var moduleId = document.getElementById('moduleIdInput').value;
-    fetch('/api/ping', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: moduleId })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(\`HTTP error! status: \${response.status}\`);
-        }
-        return response.text();
-    })
-    .then(data => {
-        alert(data);
-    })
-    .catch(error => {
-        console.error('Error pinging the module:', error);
-        alert('Error pinging the module: ' + (error.message || "Unknown error"));
-    });
-    
-};                }
-                return response.text();
-            })
-            .then(data => {
-                alert(data);
-            })
-            .catch(error => {
-                console.error('Error pinging the module:', error);
-                alert('Error pinging the module: ' + error.message);
-            });
-        };
-          </script>
+              var moduleId = document.getElementById('moduleIdInput').value;
+              fetch('/api/ping', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ id: moduleId })
+              })
+              .then(response => {
+                  if (!response.ok) {
+                    throw new Error(\`HTTP error! status: \${response.status}\`);
+                }
+                  return response.text();
+              })
+              .then(data => {
+                  alert(data);
+              })
+              .catch(error => {
+                  console.error('Error pinging the module:', error);
+                  alert('Error pinging the module: ' + error.message);
+              });
+          };
+      </script>
+      
       </body>
       </html>
       `;
