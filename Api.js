@@ -319,10 +319,9 @@ app.get("/ping", (req, res) => {
 
 app.post("/api/ping", (req, res) => {
   const { id: esp32IpAddress } = req.body;
-  console.log(`Pinging ESP32 at IP: ${esp32IpAddress}`);
-  // Here, add a line to log the full request body or any other details.
-  console.log(`Request Body: ${JSON.stringify(req.body)}`);
-  // Existing code...
+  console.log(`Received ping request for ESP32 at IP: ${esp32IpAddress}`);
+
+  res.status(200).send(`Ping sent to ESP32 at ${esp32IpAddress}`);
 });
 
 app.listen(port, () => {
