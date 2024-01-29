@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-
+const cors = require('cors');
+app.use(cors());
 // Store logs in memory for this example
 const logs = [];
 let connectedModules = {};
