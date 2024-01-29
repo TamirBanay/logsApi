@@ -20,8 +20,8 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, macAddress } = req.body;
-  connectedModules[id] = { macAddress, lastSeen: new Date() };
+  const { id, ipAddress } = req.body; // Assuming the module sends its IP in the request body
+  connectedModules[id] = { ipAddress, lastSeen: new Date() };
   res.status(200).send("Module registered");
 });
 
@@ -108,7 +108,9 @@ app.get("/", (req, res) => {
                               moduleDiv.classList.add('module');
                               moduleDiv.innerHTML = \`
                                   <strong>Module ID:</strong> \${id}<br />
-                                  <strong>MAC Address:</strong> \${details.macAddress || 'Not Available'}<br />
+                                  <strong>IP Address:</strong> ${
+                                    details.ipAddress || "Not Available"
+                                  }<br />
                                   <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
                               \`;
                               modulesInfo.appendChild(moduleDiv);
