@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const cors = require('cors');
+const cors = require("cors");
 app.use(cors());
 // Store logs in memory for this example
 const logs = [];
@@ -188,20 +188,6 @@ app.get("/logs", (req, res) => {
   res.send(html);
 });
 
-// Existing server code ...
-
-// Add a new POST endpoint to handle pings
-app.post("/api/ping", (req, res) => {
-  console.log(`Received ping request for module ID: ${req.body.id}`);
-  const { id } = req.body;
-  if (connectedModules[id]) {
-    console.log(`Pinging module with ID: ${id}`);
-    res.status(200).send(`Ping sent to module ${id}`);
-  } else {
-    res.status(404).send(`Module with ID ${id} not found`);
-  }
-});
-
 app.get("/ping", (req, res) => {
   let html = `
       <!DOCTYPE html>
@@ -266,21 +252,84 @@ app.get("/ping", (req, res) => {
   res.send(html);
 });
 
+app.get("/ping", (req, res) => {
+  let html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Ping Module</title>
+            <style>
+                /* Basic styling */
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background: #f4f4f4;
+                }
+                button {
+                    padding: 10px 15px;
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    transition: background-color 0.2s;
+                }
+                button:hover {
+                    background-color: #0056b3;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Ping Module</h1>
+            <input type="text" id="moduleIdInput" placeholder="Enter Module ID" />
+            <button id="pingButton">Ping Module</button>
+            <script>
+                document.getElementById('pingButton').onclick = function() {
+                    var moduleId = document.getElementById('moduleIdInput').value;
+                    fetch('/api/ping', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: moduleId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(\`HTTP error! status: \${response.status}\`);
+                        }
+                        return response.text(); // Use text() instead of json() if the response is not in JSON format
+                    })
+                    .then(data => {
+                        alert(data); // Display the server response
+                    })
+                    .catch(error => {
+                        console.error('Error pinging the module:', error);
+                        alert('Error pinging the module: ' + error.message);
+                    });
+                };
+            </script>
+        </body>
+        </html>
+        `;
+  res.send(html);
+});
+
 app.post("/api/ping", (req, res) => {
-    const { id } = req.body;
-    console.log(`Received ping request for module ID: ${id}`);
-    console.log("Connected Modules: ", connectedModules);
-  
-    if (connectedModules[id]) {
-      console.log(`Pinging module with ID: ${id}`);
-      // Your ping logic here
-      res.status(200).send(`Ping sent to module ${id}`);
-    } else {
-      console.log(`Module with ID ${id} not found in connectedModules`);
-      res.status(404).send(`Module with ID ${id} not found`);
-    }
-  });
-  
+  const { id } = req.body;
+  console.log(`Received ping request for module ID: ${id}`);
+  console.log("Connected Modules: ", connectedModules);
+
+  if (connectedModules[id]) {
+    console.log(`Pinging module with ID: ${id}`);
+    // Your ping logic here
+    res.status(200).send(`Ping sent to module ${id}`);
+  } else {
+    console.log(`Module with ID ${id} not found in connectedModules`);
+    res.status(404).send(`Module with ID ${id} not found`);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
