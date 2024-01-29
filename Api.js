@@ -318,12 +318,32 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/api/ping", (req, res) => {
-  const { id: esp32IpAddress } = req.body;
-  console.log(`Received ping request for ESP32 at IP: ${esp32IpAddress}`);
+  const { id } = req.body; // assuming 'id' is the IP address of the ESP32
 
-  res.status(200).send(`Ping sent to ESP32 at ${esp32IpAddress}`);
+  console.log(`Attempting to ping ESP32 at IP: ${id}`);
+
+  fetch(`http://${id}/ping`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "Ping from server" }),
+  })
+    .then((espRes) => {
+      if (!espRes.ok) {
+        throw new Error(`ESP32 responded with status: ${espRes.status}`);
+      }
+      return espRes.text();
+    })
+    .then((espResBody) => {
+      console.log(`ESP32 response: ${espResBody}`);
+      res.status(200).send(`Ping sent to ESP32 at ${id}`);
+    })
+    .catch((error) => {
+      console.error("Error pinging ESP32:", error);
+      res.status(500).send("Failed to ping ESP32");
+    });
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
