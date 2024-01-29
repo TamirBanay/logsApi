@@ -108,9 +108,7 @@ app.get("/", (req, res) => {
                               moduleDiv.classList.add('module');
                               moduleDiv.innerHTML = \`
                                   <strong>Module ID:</strong> \${id}<br />
-                                  <strong>IP Address:</strong> ${
-                                    details.ipAddress || "Not Available"
-                                  }<br />
+                                  <strong>Ip Address:</strong> \${details.ipAddress  || 'Not Available'}<br />
                                   <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
                               \`;
                               modulesInfo.appendChild(moduleDiv);
