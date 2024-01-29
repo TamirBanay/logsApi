@@ -281,7 +281,7 @@ app.post("/api/ping", (req, res) => {
     })
     .catch((error) => {
       console.error("Error pinging ESP32:", error);
-      res.status(500).send("Failed to ping ESP32");
+      res.status(500).send("Failed to ping ESP32: " + error.message); // Send back the error message
     });
 });
 
