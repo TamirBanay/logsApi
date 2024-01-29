@@ -187,6 +187,83 @@ app.get("/logs", (req, res) => {
   res.send(html);
 });
 
+// Existing server code ...
+
+// Add a new POST endpoint to handle pings
+app.post("/api/ping", (req, res) => {
+  const { id } = req.body;
+  if (connectedModules[id]) {
+    // Construct your ping logic here, for example:
+    // You might send a request to the module's pingEndpoint
+    console.log(`Pinging module with ID: ${id}`);
+    // Simulate a ping for demonstration
+    res.status(200).send(`Ping sent to module ${id}`);
+  } else {
+    res.status(404).send(`Module with ID ${id} not found`);
+  }
+});
+
+// Add a new route to serve an HTML page with a ping button
+app.get("/ping", (req, res) => {
+  let html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Ping Module</title>
+          <style>
+              /* Basic styling */
+              body {
+                  font-family: Arial, sans-serif;
+                  margin: 0;
+                  padding: 20px;
+                  background: #f4f4f4;
+              }
+              button {
+                  padding: 10px 15px;
+                  background-color: #007bff;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 16px;
+                  transition: background-color 0.2s;
+              }
+              button:hover {
+                  background-color: #0056b3;
+              }
+          </style>
+      </head>
+      <body>
+          <h1>Ping Module</h1>
+          <input type="text" id="moduleIdInput" placeholder="Enter Module ID" />
+          <button id="pingButton">Ping Module</button>
+          <script>
+              document.getElementById('pingButton').onclick = function() {
+                  var moduleId = document.getElementById('moduleIdInput').value;
+                  fetch('/api/ping', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ id: moduleId })
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      alert(data); // Display the server response
+                  })
+                  .catch(error => {
+                      console.error('Error pinging the module:', error);
+                  });
+              };
+          </script>
+      </body>
+      </html>
+      `;
+  res.send(html);
+});
+
+// Existing server code continues...
+
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
