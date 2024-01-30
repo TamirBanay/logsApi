@@ -29,6 +29,10 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
+app.get("/test1", (req, res) => {
+  res.json(false);
+});
+
 app.get("/", (req, res) => {
   console.log("Root endpoint accessed");
   let html = `
