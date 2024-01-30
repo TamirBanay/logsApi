@@ -76,7 +76,7 @@ app.get("/change", (req, res) => {
       </style>
     </head>
     <body>
-      <button id="changeButton">Change to True</button>
+      <button id="changeButton">Trigger leds</button>
     
       <script>
         document.getElementById('changeButton').addEventListener('click', function() {
