@@ -51,21 +51,24 @@ app.post("/changeLedValue", (req, res) => {
     console.log("Value reverted to false");
   }, 3000);
 });
-
 app.get("/change", (req, res) => {
-  // Generate HTML for each module with status 'success'
   let detailsHtml = Object.entries(connectedModules)
-    .map(([moduleId, details]) => {
-      return details.status === "success"
-        ? `<div class="module">
-            <p>Module ID: ${moduleId}</p>
-            <p>Status: ${details.status}</p>
-            <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
-           </div>`
-        : "";
-    })
-    .join(""); // Join all the individual HTML strings into one
+    .filter(([_, details]) => details.status === "success")
+    .map(
+      ([moduleId, details]) => `
+        <div class="module">
+          <p>Module ID: ${moduleId}</p>
+          <p>Status: ${details.status}</p>
+          <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+        </div>
+      `
+    )
+    .join("");
 
+  // Check if any module details were added
+  if (!detailsHtml) {
+    detailsHtml = "<p>No modules have reported success.</p>";
+  }
   res.send(`<!DOCTYPE html>
     <html lang="en">
     <head>
