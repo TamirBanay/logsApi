@@ -92,12 +92,8 @@ app.get("/testresult", (req, res) => {
   for (let moduleId in connectedModules) {
     let module = connectedModules[moduleId];
     let lastSeenTime = new Date(module.lastSeen);
-    // Add 2 hours to the lastSeenTime
     lastSeenTime.setHours(lastSeenTime.getHours() + 2);
-
-    const TIMEOUT_THRESHOLD = 5000; // Time in milliseconds (e.g., 5 seconds)
-
-    // Compare the adjusted lastSeenTime (with added 2 hours) with the current time
+    const TIMEOUT_THRESHOLD = 5000;
     if (
       currentTime - lastSeenTime > TIMEOUT_THRESHOLD &&
       module.status !== "success"
@@ -112,7 +108,7 @@ app.get("/testresult", (req, res) => {
   <div class="module">
     <p>Module ID: ${moduleId}</p>
     <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
-    <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+    <p>Last Seen: ${new Date(details.lastSeen).toLocaleString() + 2}</p>
   </div>
 `
     )
