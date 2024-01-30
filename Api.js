@@ -4,7 +4,6 @@ const port = 3000;
 
 const logs = [];
 let connectedModules = {};
-let moduleDetails = {};
 
 app.use(express.json());
 
@@ -19,6 +18,24 @@ app.post("/api/logs", (req, res) => {
   }
 });
 
+function generateNavMenu(currentRoute) {
+  return `
+      <nav>
+        <ul style="list-style-type: none; display: flex; justify-content: center;">
+          <li style="margin-right: 20px;"><a href="/" ${
+            currentRoute === "/" ? 'style="font-weight:bold;"' : ""
+          }>Home</a></li>
+          <li style="margin-right: 20px;"><a href="/logs" ${
+            currentRoute === "/logs" ? 'style="font-weight:bold;"' : ""
+          }>Logs</a></li>
+          <li><a href="/change" ${
+            currentRoute === "/change" ? 'style="font-weight:bold;"' : ""
+          }>Change Status</a></li>
+        </ul>
+      </nav>
+    `;
+}
+
 app.post("/api/register", (req, res) => {
   const { id, ipAddress } = req.body;
   connectedModules[id] = { ipAddress, lastSeen: new Date() };
@@ -32,7 +49,7 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { id, status } = req.body; // Assume the body will have an 'id' and 'status'
+  const { id, status } = req.body;
   if (id && status) {
     connectedModules[id] = { status, lastSeen: new Date() };
     res.status(200).send("Success notification received");
@@ -56,28 +73,25 @@ app.post("/changeLedValue", (req, res) => {
 });
 
 function checkModuleStatus() {
-    const now = new Date();
-    Object.entries(connectedModules).forEach(([moduleId, details]) => {
-      const lastSeen = new Date(details.lastSeen);
-      const timeSinceLastSeen = now - lastSeen; // Time difference in milliseconds
-      const TIMEOUT_THRESHOLD = 30000; // Time in milliseconds (e.g., 30 seconds)
-  
-      // If the module hasn't reported in the past TIMEOUT_THRESHOLD, mark it as failed
-      if (timeSinceLastSeen > TIMEOUT_THRESHOLD) {
-        connectedModules[moduleId].status = "failed";
-      }
-    });
-  }
+  const now = new Date();
+  Object.entries(connectedModules).forEach(([moduleId, details]) => {
+    const lastSeen = new Date(details.lastSeen);
+    const timeSinceLastSeen = now - lastSeen;
+    const TIMEOUT_THRESHOLD = 30000;
 
-app.get("/change", (req, res) => {
-    checkModuleStatus();
-    let currentTime = new Date();
+    if (timeSinceLastSeen > TIMEOUT_THRESHOLD) {
+      connectedModules[moduleId].status = "failed";
+    }
+  });
+}
 
-  // Update the status based on the lastSeen timestamp
+app.get("/testresult", (req, res) => {
+  checkModuleStatus();
+  let currentTime = new Date();
+
   for (let moduleId in connectedModules) {
     let module = connectedModules[moduleId];
     let lastSeenTime = new Date(module.lastSeen);
-    // Set a threshold for failure (e.g., 5 seconds)
     if (currentTime - lastSeenTime > 5000 && module.status !== "success") {
       module.status = "failed";
     }
@@ -106,35 +120,47 @@ app.get("/change", (req, res) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Module Status</title>
       <style>
-        /* CSS for the modules */
-        .module {
-          background-color: #f9f9f9; /* Light gray background */
-          border: 1px solid #ddd; /* Gray border */
-          padding: 10px; /* Padding around the text */
-          margin-bottom: 10px; /* Margin between modules */
-          border-radius: 5px; /* Rounded corners */
-        }
-        /* CSS for the button */
-        #changeButton {
-          font-size: 20px; /* Large font size */
-          padding: 15px 30px; /* Padding around the text */
-          background-color: #4CAF50; /* Green background */
-          color: white; /* White text */
-          border: none; /* No border */
-          border-radius: 5px; /* Rounded corners */
-          cursor: pointer; /* Pointer cursor on hover */
-          transition: background-color 0.3s; /* Smooth transition for background color */
-        }
-        #changeButton:hover {
-          background-color: #45a049; /* Darker shade of green on hover */
-        }
-        #changeButton:disabled {
-          background-color: #ccc; /* Gray background for disabled state */
-          cursor: not-allowed; /* Not-allowed cursor for disabled state */
-        }
-      </style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    #modulesInfo {
+      margin-top: 20px;
+    }
+    .module {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #changeButton {
+      display: block;
+      width: 150px;
+      margin: 20px auto;
+      padding: 10px;
+      text-align: center;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #changeButton:hover {
+      background-color: #0056b3;
+    }
+    #changeButton:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
     </head>
     <body>
+    ${generateNavMenu("/testresult")}
+
     ${detailsHtml}
     <button id="changeButton">Trigger LEDs</button>
       <script>
@@ -216,10 +242,11 @@ app.get("/", (req, res) => {
           </style>
       </head>
       <body>
+      ${generateNavMenu("/")}
+
           <h1>Connected Modules</h1>
           <button id="fetchModules">Get Connected Modules</button>
           <div id="modulesInfo"></div>
-          <a href="/logs" class="back-button">See Logs</a>
   
           <script>
               document.getElementById('fetchModules').onclick = function() {
@@ -227,7 +254,7 @@ app.get("/", (req, res) => {
                       .then(response => response.json())
                       .then(data => {
                           const modulesInfo = document.getElementById('modulesInfo');
-                          modulesInfo.innerHTML = ''; // Clear previous content
+                          modulesInfo.innerHTML = ''; 
   
                           for (const [id, details] of Object.entries(data)) {
                               const moduleDiv = document.createElement('div');
@@ -249,35 +276,7 @@ app.get("/", (req, res) => {
           </script>
 
           
-          <input type="text" id="ipInput" placeholder="Enter ESP32 IP address"/>
-          <button id="testButton">Test LED</button>
 
-          <script>
-              document.getElementById('testButton').onclick = function() {
-                  var ip = document.getElementById('ipInput').value;
-                  if(ip) {
-                      fetch('/api/test', { 
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({ ip: ip })
-                      })
-                      .then(response => {
-                          if(response.ok) {
-                              console.log("LED should be now on.");
-                          } else {
-                              console.error('Server responded with status ' + response.status);
-                          }
-                      })
-                      .catch(error => {
-                          console.error('Error:', error);
-                      });
-                  } else {
-                      alert('Please enter the IP address.');
-                  }
-              };
-          </script>
       </body>
       </html>
       `;
@@ -335,12 +334,14 @@ app.get("/logs", (req, res) => {
         </style>
     </head>
     <body>
+    ${generateNavMenu("/logs")}
+
         <h1>Logs</h1>
-        <a href="/" class="back-button">Back to Home</a>
+
 
         <ul>`;
   logs.forEach((log) => {
-    html += `<li>${JSON.stringify(log, null, 2)}</li>`; // pretty-print the JSON
+    html += `<li>${JSON.stringify(log, null, 2)}</li>`;
   });
   html += `</ul>
     </body>
