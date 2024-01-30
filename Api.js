@@ -36,10 +36,16 @@ app.get("/test1", (req, res) => {
 });
 
 app.post("/change", (req, res) => {
-  myBoolean = true; // Change the value of myBoolean to true
-  res.send("Value changed to true"); // Send a response back to the client
-});
-
+    myBoolean = true; // Change the value of myBoolean to true
+    res.send("Value changed to true"); // Send a response back to the client
+    
+    // Set a timer to change myBoolean back to false after 3 seconds
+    setTimeout(() => {
+      myBoolean = false;
+      console.log("Value reverted to false");
+    }, 3000); // 3000 milliseconds = 3 seconds
+  });
+  
 app.get("/change", (req, res) => {
   res.send(`<!DOCTYPE html>
   <html lang="en">
