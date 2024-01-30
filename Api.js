@@ -42,7 +42,7 @@ app.post("/changeLedValue", (req, res) => {
   setTimeout(() => {
     myBoolean = false;
     console.log("Value reverted to false");
-  }, 3000);
+  }, 1000);
 });
 
 app.get("/change", (req, res) => {
