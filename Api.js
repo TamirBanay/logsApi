@@ -59,55 +59,55 @@ app.get("/change", (req, res) => {
     : "<p>No module details available.</p>";
 
   res.send(`<!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Value</title>
-    <style>
-      /* CSS for the button */
-      #changeButton {
-        font-size: 20px; /* Large font size */
-        padding: 15px 30px; /* Padding around the text */
-        background-color: #4CAF50; /* Green background */
-        color: white; /* White text */
-        border: none; /* No border */
-        border-radius: 5px; /* Rounded corners */
-        cursor: pointer; /* Pointer cursor on hover */
-        transition: background-color 0.3s; /* Smooth transition for background color */
-      }
-  
-      #changeButton:hover {
-        background-color: #45a049; /* Darker shade of green on hover */
-      }
-  
-      #changeButton:disabled {
-        background-color: #ccc; /* Gray background for disabled state */
-        cursor: not-allowed; /* Not-allowed cursor for disabled state */
-      }
-    </style>
-  </head>
-  <body>
-    ${detailsHtml}
-    <button id="changeButton">Trigger LEDs</button>
-  
-    <script>
-      document.getElementById('changeButton').addEventListener('click', function() {
-        fetch('/changeLedValue', { method: 'POST' })
-          .then(response => response.text())
-          .then(data => {
-            console.log(data);
-            // Optionally update the button to reflect the change
-            document.getElementById('changeButton').textContent = 'LEDs Triggered';
-            document.getElementById('changeButton').disabled = true;
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-      });
-    </script>
-  </body>
-  </html>`);
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Change Value</title>
+      <style>
+        /* CSS for the button */
+        #changeButton {
+          font-size: 20px; /* Large font size */
+          padding: 15px 30px; /* Padding around the text */
+          background-color: #4CAF50; /* Green background */
+          color: white; /* White text */
+          border: none; /* No border */
+          border-radius: 5px; /* Rounded corners */
+          cursor: pointer; /* Pointer cursor on hover */
+          transition: background-color 0.3s; /* Smooth transition for background color */
+        }
+    
+        #changeButton:hover {
+          background-color: #45a049; /* Darker shade of green on hover */
+        }
+    
+        #changeButton:disabled {
+          background-color: #ccc; /* Gray background for disabled state */
+          cursor: not-allowed; /* Not-allowed cursor for disabled state */
+        }
+      </style>
+    </head>
+    <body>
+      ${detailsHtml}
+      <button id="changeButton">Trigger LEDs</button>
+    
+      <script>
+        document.getElementById('changeButton').addEventListener('click', function() {
+          fetch('/changeLedValue', { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+              console.log(data);
+              // Optionally update the button to reflect the change
+              document.getElementById('changeButton').textContent = 'LEDs Triggered';
+              document.getElementById('changeButton').disabled = true;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+      </script>
+    </body>
+    </html>`);
 });
 
 app.get("/", (req, res) => {
