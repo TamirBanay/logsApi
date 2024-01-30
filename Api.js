@@ -123,21 +123,40 @@ app.get("/change", (req, res) => {
     ${detailsHtml}
     <button id="changeButton">Trigger LEDs</button>
       <script>
-        document.getElementById('changeButton').addEventListener('click', function() {
-          fetch('/changeLedValue', { method: 'POST' })
-            .then(response => response.text())
-            .then(data => {
-              console.log(data);
-              document.getElementById('changeButton').textContent = 'LEDs Triggered';
-              document.getElementById('changeButton').disabled = true;
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-        });
+      document.getElementById('changeButton').addEventListener('click', function() {
+        fetch('/updateStatus', { method: 'POST' })
+          .then(response => response.json()) // Expecting a JSON response
+          .then(data => {
+            console.log(data.message);
+            document.getElementById('changeButton').textContent = data.message;
+            // You could also trigger a refresh of the module status here if needed
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
       </script>
     </body>
     </html>`);
+});
+
+// Node.js server code
+app.post("/updateStatus", (req, res) => {
+  // Here you will need to identify which module is making the request
+  // This could be done by sending the module ID in the request body, for example
+  // For this example, let's assume the module ID is sent in the request body
+
+  const moduleId = req.body.moduleId; // You'll need to set this up on the client side as well
+
+  if (connectedModules[moduleId]) {
+    // Update the status of the module
+    connectedModules[moduleId].status = "success";
+    connectedModules[moduleId].lastSeen = new Date().toISOString();
+    res.json({ message: "Module status updated to success" });
+  } else {
+    // Handle the case where the module ID is not found
+    res.status(404).json({ message: "Module not found" });
+  }
 });
 
 app.get("/", (req, res) => {
