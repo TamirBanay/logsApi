@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const logs = [];
 let connectedModules = {};
+let moduleDetails = {};
 
 app.use(express.json());
 
@@ -31,6 +32,13 @@ app.get("/api/modules", (req, res) => {
 
 let myBoolean = false;
 
+app.post("/notifySuccess", (req, res) => {
+  const details = req.body;
+  console.log("Module Details:", details);
+  moduleDetails = details; // Save the details
+  res.status(200).send("Success notification received");
+});
+
 app.get("/testLed", (req, res) => {
   res.json(myBoolean);
 });
@@ -42,59 +50,64 @@ app.post("/changeLedValue", (req, res) => {
   setTimeout(() => {
     myBoolean = false;
     console.log("Value reverted to false");
-  }, 1000);
+  }, 3000);
 });
 
 app.get("/change", (req, res) => {
+  const detailsHtml = moduleDetails.id
+    ? `<p>Module ID: ${moduleDetails.id}</p><p>Status: ${moduleDetails.status}</p>`
+    : "<p>No module details available.</p>";
+
   res.send(`<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Change Value</title>
-      <style>
-        /* CSS for the button */
-        #changeButton {
-          font-size: 20px; /* Large font size */
-          padding: 15px 30px; /* Padding around the text */
-          background-color: #4CAF50; /* Green background */
-          color: white; /* White text */
-          border: none; /* No border */
-          border-radius: 5px; /* Rounded corners */
-          cursor: pointer; /* Pointer cursor on hover */
-          transition: background-color 0.3s; /* Smooth transition for background color */
-        }
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Value</title>
+    <style>
+      /* CSS for the button */
+      #changeButton {
+        font-size: 20px; /* Large font size */
+        padding: 15px 30px; /* Padding around the text */
+        background-color: #4CAF50; /* Green background */
+        color: white; /* White text */
+        border: none; /* No border */
+        border-radius: 5px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s; /* Smooth transition for background color */
+      }
   
-        #changeButton:hover {
-          background-color: #45a049; /* Darker shade of green on hover */
-        }
+      #changeButton:hover {
+        background-color: #45a049; /* Darker shade of green on hover */
+      }
   
-        #changeButton:disabled {
-          background-color: #ccc; /* Gray background for disabled state */
-          cursor: not-allowed; /* Not-allowed cursor for disabled state */
-        }
-      </style>
-    </head>
-    <body>
-      <button id="changeButton">Trigger leds</button>
-    
-      <script>
-        document.getElementById('changeButton').addEventListener('click', function() {
-          fetch('/changeLedValue', { method: 'POST' })
-            .then(response => response.text())
-            .then(data => {
-              console.log(data);
-              // Optionally update the button to reflect the change
-              document.getElementById('changeButton').textContent = 'Changed to True';
-              document.getElementById('changeButton').disabled = true;
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-        });
-      </script>
-    </body>
-    </html>`);
+      #changeButton:disabled {
+        background-color: #ccc; /* Gray background for disabled state */
+        cursor: not-allowed; /* Not-allowed cursor for disabled state */
+      }
+    </style>
+  </head>
+  <body>
+    ${detailsHtml}
+    <button id="changeButton">Trigger LEDs</button>
+  
+    <script>
+      document.getElementById('changeButton').addEventListener('click', function() {
+        fetch('/changeLedValue', { method: 'POST' })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+            // Optionally update the button to reflect the change
+            document.getElementById('changeButton').textContent = 'LEDs Triggered';
+            document.getElementById('changeButton').disabled = true;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
+    </script>
+  </body>
+  </html>`);
 });
 
 app.get("/", (req, res) => {
