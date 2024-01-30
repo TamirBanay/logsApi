@@ -52,6 +52,9 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 app.get("/change", (req, res) => {
+  console.log(connectedModules);
+  console.log(moduleDetails);
+
   let detailsHtml = Object.entries(connectedModules)
     .filter(([_, details]) => details.status === "success")
     .map(
@@ -316,44 +319,6 @@ app.get("/logs", (req, res) => {
     </body>
     </html>`;
   res.send(html);
-});
-const axios = require("axios"); // Ensure you have this at the top of your file
-
-app.post("/api/test", (req, res) => {
-  const ipAddress = req.body.ip;
-  console.log("Received IP: ", ipAddress); // Log the received IP address
-  if (!ipAddress) {
-    return res.status(400).send("IP address is required");
-  }
-
-  console.log(
-    "Test endpoint hit, triggering LED on the module with IP: " + ipAddress
-  );
-
-  // The axios call should be within the scope of the route handler
-  axios
-    .post(`http://${ipAddress}/trigger-led`)
-    .then((response) => {
-      console.log("LED should be now on.");
-      res.status(200).send("Triggered LED successfully.");
-    })
-    .catch((error) => {
-      console.error("Error triggering LED:", error.message);
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
-      }
-      res.status(500).send("Error triggering LED");
-    });
 });
 
 app.listen(port, "0.0.0.0", () => {
