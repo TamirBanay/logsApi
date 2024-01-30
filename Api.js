@@ -54,9 +54,24 @@ app.post("/changeLedValue", (req, res) => {
     console.log("Value reverted to false");
   }, 3000);
 });
+
+function checkModuleStatus() {
+    const now = new Date();
+    Object.entries(connectedModules).forEach(([moduleId, details]) => {
+      const lastSeen = new Date(details.lastSeen);
+      const timeSinceLastSeen = now - lastSeen; // Time difference in milliseconds
+      const TIMEOUT_THRESHOLD = 30000; // Time in milliseconds (e.g., 30 seconds)
+  
+      // If the module hasn't reported in the past TIMEOUT_THRESHOLD, mark it as failed
+      if (timeSinceLastSeen > TIMEOUT_THRESHOLD) {
+        connectedModules[moduleId].status = "failed";
+      }
+    });
+  }
+
 app.get("/change", (req, res) => {
-  // Assuming connectedModules is updated elsewhere in your server code
-  let currentTime = new Date();
+    checkModuleStatus();
+    let currentTime = new Date();
 
   // Update the status based on the lastSeen timestamp
   for (let moduleId in connectedModules) {
