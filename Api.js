@@ -21,14 +21,27 @@ app.post("/api/logs", (req, res) => {
 function generateNavMenu(currentRoute) {
   return `
       <nav>
-        <ul style="list-style-type: none; display: flex; justify-content: center;">
-          <li style="margin-right: 20px;"><a href="/" ${
+        <ul style="list-style-type: none; display: flex; justify-content:space-around; padding-left:0px;">
+          <li style="background-color: #fff;
+          margin: 10px 0;
+          padding: 10px;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);"><a style="color:black; text-decoration: none;font-weight:bold;" href="/" ${
             currentRoute === "/" ? 'style="font-weight:bold;"' : ""
           }>Home</a></li>
-          <li style="margin-right: 20px;"><a href="/logs" ${
+          <li style="background-color: #fff;
+          margin: 10px 0;
+          padding: 10px;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);"><a style="color:black; text-decoration: none;font-weight:bold;" href="/logs" ${
             currentRoute === "/logs" ? 'style="font-weight:bold;"' : ""
           }>Logs</a></li>
-          <li><a href="/testresult" ${
+          <li style="background-color: #fff;
+          margin: 10px 0;
+          padding: 10px;
+          border-radius: 5px;
+      
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);"><a style="color:black; text-decoration: none;font-weight:bold;" href="/testresult" ${
             currentRoute === "/testresult" ? 'style="font-weight:bold;"' : ""
           }>Test</a></li>
         </ul>
@@ -312,13 +325,7 @@ app.get("/logs", (req, res) => {
                 list-style-type: none;
                 padding: 0;
             }
-            li {
-                background-color: #fff;
-                margin: 10px 0;
-                padding: 10px;
-                border-radius: 5px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
+  
             .back-button {
                 display: block;
                 width: 150px;
