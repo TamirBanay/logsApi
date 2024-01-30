@@ -28,7 +28,7 @@ function generateNavMenu(currentRoute) {
           <li style="margin-right: 20px;"><a href="/logs" ${
             currentRoute === "/logs" ? 'style="font-weight:bold;"' : ""
           }>Logs</a></li>
-          <li><a href="/change" ${
+          <li><a href="/testresult" ${
             currentRoute === "/testresult" ? 'style="font-weight:bold;"' : ""
           }>Test</a></li>
         </ul>
@@ -92,7 +92,16 @@ app.get("/testresult", (req, res) => {
   for (let moduleId in connectedModules) {
     let module = connectedModules[moduleId];
     let lastSeenTime = new Date(module.lastSeen);
-    if (currentTime - lastSeenTime > 5000 && module.status !== "success") {
+    // Add 2 hours to the lastSeenTime
+    lastSeenTime.setHours(lastSeenTime.getHours() + 2);
+
+    const TIMEOUT_THRESHOLD = 5000; // Time in milliseconds (e.g., 5 seconds)
+
+    // Compare the adjusted lastSeenTime (with added 2 hours) with the current time
+    if (
+      currentTime - lastSeenTime > TIMEOUT_THRESHOLD &&
+      module.status !== "success"
+    ) {
       module.status = "failed";
     }
   }
