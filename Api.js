@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const cors = require("cors");
 
 const logs = [];
 let connectedModules = {};
@@ -54,17 +53,34 @@ app.post("/changeLedValue", (req, res) => {
 });
 
 app.get("/change", (req, res) => {
-  const detailsHtml = moduleDetails.id
-    ? `<p>Module ID: ${moduleDetails.id}</p><p>Status: ${moduleDetails.status}</p>`
-    : "<p>No module details available.</p>";
+  // Generate HTML for each module with status 'success'
+  let detailsHtml = Object.entries(connectedModules)
+    .map(([moduleId, details]) => {
+      return details.status === "success"
+        ? `<div class="module">
+            <p>Module ID: ${moduleId}</p>
+            <p>Status: ${details.status}</p>
+            <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+           </div>`
+        : "";
+    })
+    .join(""); // Join all the individual HTML strings into one
 
   res.send(`<!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Change Value</title>
+      <title>Module Status</title>
       <style>
+        /* CSS for the modules */
+        .module {
+          background-color: #f9f9f9; /* Light gray background */
+          border: 1px solid #ddd; /* Gray border */
+          padding: 10px; /* Padding around the text */
+          margin-bottom: 10px; /* Margin between modules */
+          border-radius: 5px; /* Rounded corners */
+        }
         /* CSS for the button */
         #changeButton {
           font-size: 20px; /* Large font size */
@@ -76,11 +92,9 @@ app.get("/change", (req, res) => {
           cursor: pointer; /* Pointer cursor on hover */
           transition: background-color 0.3s; /* Smooth transition for background color */
         }
-    
         #changeButton:hover {
           background-color: #45a049; /* Darker shade of green on hover */
         }
-    
         #changeButton:disabled {
           background-color: #ccc; /* Gray background for disabled state */
           cursor: not-allowed; /* Not-allowed cursor for disabled state */
@@ -90,14 +104,12 @@ app.get("/change", (req, res) => {
     <body>
       ${detailsHtml}
       <button id="changeButton">Trigger LEDs</button>
-    
       <script>
         document.getElementById('changeButton').addEventListener('click', function() {
           fetch('/changeLedValue', { method: 'POST' })
             .then(response => response.text())
             .then(data => {
               console.log(data);
-              // Optionally update the button to reflect the change
               document.getElementById('changeButton').textContent = 'LEDs Triggered';
               document.getElementById('changeButton').disabled = true;
             })
