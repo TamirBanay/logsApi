@@ -20,7 +20,7 @@ app.post("/api/logs", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, ipAddress } = req.body; // Assuming the module sends its IP in the request body
+  const { id, ipAddress } = req.body; 
   connectedModules[id] = { ipAddress, lastSeen: new Date() };
   res.status(200).send("Module registered");
 });
@@ -31,19 +31,18 @@ app.get("/api/modules", (req, res) => {
 
 let myBoolean = false;
 
-app.get("/test1", (req, res) => {
-  res.json(myBoolean); // Sends the current value of myBoolean
+app.get("/testLed", (req, res) => {
+  res.json(myBoolean); 
 });
 
-app.post("/change", (req, res) => {
-    myBoolean = true; // Change the value of myBoolean to true
-    res.send("Value changed to true"); // Send a response back to the client
+app.post("/changeLedValue", (req, res) => {
+    myBoolean = true;
+    res.send("Value changed to true");
     
-    // Set a timer to change myBoolean back to false after 3 seconds
     setTimeout(() => {
       myBoolean = false;
       console.log("Value reverted to false");
-    }, 3000); // 3000 milliseconds = 3 seconds
+    }, 3000);
   });
   
 app.get("/change", (req, res) => {
@@ -59,7 +58,7 @@ app.get("/change", (req, res) => {
   
     <script>
       document.getElementById('changeButton').addEventListener('click', function() {
-        fetch('/change', { method: 'POST' })
+        fetch('/changeLedValue', { method: 'POST' })
           .then(response => response.text())
           .then(data => {
             console.log(data);
