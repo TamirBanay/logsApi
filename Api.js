@@ -32,10 +32,14 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const details = req.body;
-  console.log("Module Details:", details);
-  moduleDetails = details; // Save the details
-  res.status(200).send("Success notification received");
+  const { id, status } = req.body; // Assume the body will have an 'id' and 'status'
+  if (id && status) {
+    // Update the connectedModules with the new status
+    connectedModules[id] = { status, lastSeen: new Date() }; // Update lastSeen to current date/time
+    res.status(200).send("Success notification received");
+  } else {
+    res.status(400).send("ID or status missing");
+  }
 });
 
 app.get("/testLed", (req, res) => {
@@ -59,12 +63,12 @@ app.get("/change", (req, res) => {
     .filter(([_, details]) => details.status === "success")
     .map(
       ([moduleId, details]) => `
-        <div class="module">
-          <p>Module ID: ${moduleId}</p>
-          <p>Status: ${details.status}</p>
-          <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
-        </div>
-      `
+    <div class="module">
+      <p>Module ID: ${moduleId}</p>
+      <p>Status: ${details.status}</p>
+      <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+    </div>
+  `
     )
     .join("");
 
@@ -108,8 +112,8 @@ app.get("/change", (req, res) => {
       </style>
     </head>
     <body>
-      ${detailsHtml}
-      <button id="changeButton">Trigger LEDs</button>
+    ${detailsHtml}
+    <button id="changeButton">Trigger LEDs</button>
       <script>
         document.getElementById('changeButton').addEventListener('click', function() {
           fetch('/changeLedValue', { method: 'POST' })
