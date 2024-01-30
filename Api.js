@@ -35,7 +35,7 @@ app.post("/notifySuccess", (req, res) => {
   const { id, status } = req.body; // Assume the body will have an 'id' and 'status'
   if (id && status) {
     // Update the connectedModules with the new status
-    connectedModules[id] = { status, lastSeen: new Date() }; // Update lastSeen to current date/time
+    connectedModules[id] = { status, lastSeen: new Date() };
     res.status(200).send("Success notification received");
   } else {
     res.status(400).send("ID or status missing");
@@ -56,25 +56,33 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 app.get("/change", (req, res) => {
-  console.log(connectedModules);
-  console.log(moduleDetails);
+  // Assuming connectedModules is updated elsewhere in your server code
+  let currentTime = new Date();
+
+  // Update the status based on the lastSeen timestamp
+  for (let moduleId in connectedModules) {
+    let module = connectedModules[moduleId];
+    let lastSeenTime = new Date(module.lastSeen);
+    // Set a threshold for failure (e.g., 5 seconds)
+    if (currentTime - lastSeenTime > 5000 && module.status !== "success") {
+      module.status = "failed";
+    }
+  }
 
   let detailsHtml = Object.entries(connectedModules)
-    .filter(([_, details]) => details.status === "success")
     .map(
       ([moduleId, details]) => `
-    <div class="module">
-      <p>Module ID: ${moduleId}</p>
-      <p>Status: ${details.status}</p>
-      <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
-    </div>
-  `
+        <div class="module">
+          <p>Module ID: ${moduleId}</p>
+          <p>Status: ${details.status}</p>
+          <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+        </div>
+      `
     )
     .join("");
 
-  // Check if any module details were added
   if (!detailsHtml) {
-    detailsHtml = "<p>No modules have reported success.</p>";
+    detailsHtml = "<p>No module details available.</p>";
   }
   res.send(`<!DOCTYPE html>
     <html lang="en">
