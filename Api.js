@@ -29,8 +29,8 @@ function generateNavMenu(currentRoute) {
             currentRoute === "/logs" ? 'style="font-weight:bold;"' : ""
           }>Logs</a></li>
           <li><a href="/change" ${
-            currentRoute === "/change" ? 'style="font-weight:bold;"' : ""
-          }>Change Status</a></li>
+            currentRoute === "/testresult" ? 'style="font-weight:bold;"' : ""
+          }>Test</a></li>
         </ul>
       </nav>
     `;
