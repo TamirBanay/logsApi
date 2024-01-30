@@ -29,8 +29,45 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
+let myBoolean = false;
+
 app.get("/test1", (req, res) => {
-  res.json(false);
+  res.json(myBoolean); // Sends the current value of myBoolean
+});
+
+app.post("/change", (req, res) => {
+  myBoolean = true; // Change the value of myBoolean to true
+  res.send("Value changed to true"); // Send a response back to the client
+});
+
+app.get("/change", (req, res) => {
+  res.send(`<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Value</title>
+  </head>
+  <body>
+    <button id="changeButton">Change to True</button>
+  
+    <script>
+      document.getElementById('changeButton').addEventListener('click', function() {
+        fetch('/change', { method: 'POST' })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+            // Optionally update the button to reflect the change
+            document.getElementById('changeButton').textContent = 'Changed to True';
+            document.getElementById('changeButton').disabled = true;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      });
+    </script>
+  </body>
+  </html>`);
 });
 
 app.get("/", (req, res) => {
