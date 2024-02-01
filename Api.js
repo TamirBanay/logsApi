@@ -148,7 +148,7 @@ app.get("/testresult", (req, res) => {
             }</p>
             <p>Mac Address: ${details.macAddress}</p>
             <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
-            <button onclick="activateTestLed('${
+            <button onclick="activateTestLedByMacAdrress('${
               details.macAddress
             }')">Activate Test LED</button>
 
