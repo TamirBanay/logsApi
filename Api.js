@@ -49,8 +49,9 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
+// ... previous code ...
 app.post("/api/activateTestLedByMacAdrress", (req, res) => {
-  console.log("Received body:", req.body); // For debugging
+  console.log("Received body:", req.body); // Log the received body for debugging
   const { macAddress } = req.body;
 
   if (macAddress && connectedModules[macAddress]) {
@@ -58,9 +59,6 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
       "Sending test LED activation command to module with MAC:",
       macAddress
     );
-    // Here you need to implement the actual communication to the module
-    // This could be an MQTT publish, an HTTP request to the module, etc.
-
     res
       .status(200)
       .send(
@@ -69,7 +67,8 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
   } else {
     res.status(404).send("Module with specified MAC address not found");
   }
-});k
+});
+// ... following code ...
 
 app.post("/api/register", (req, res) => {
   const { id, macAddress } = req.body;
@@ -144,18 +143,15 @@ app.get("/testresult", (req, res) => {
   let detailsHtml = Object.entries(connectedModules)
     .map(
       ([moduleId, details]) => `
-        <div class="module">
-            <p>Module ID: ${moduleId}</p>
-            <p>Status: ${
-              details.status === "success" ? "success" : "failed"
-            }</p>
-            <p>Mac Address: ${details.macAddress}</p>
-            <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
-            <button onclick="activateTestLedByMacAdrress('${
-              details.macAddress
-            }')">Activate Test LED</button>
-
-        </div>
+      <div class="module">
+          <p>Module ID: ${moduleId}</p>
+          <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
+          <p>Mac Address: ${details.macAddress}</p>
+          <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
+          <button onclick="activateTestLedByMacAdrress ('${
+            details.macAddress
+          }')">Activate Test LED</button>
+      </div>
     `
     )
     .join("");
@@ -227,28 +223,27 @@ app.get("/testresult", (req, res) => {
             });
         });
       </script>
-    <script>
-    function activateTestLedByMacAdrress(macAddress) {
-        console.log("Activating test LED for MAC:", macAddress); // For debugging
-    
-        fetch('/api/activateTestLedByMacAdrress', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ macAddress: macAddress }) // Make sure this line is correct
-        })
-        .then(response => response.text())
-        .then(data => {
-            console.log(data);
-            // Handle successful response
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-    
-</script>
+      <script>
+      function activateTestLedByMacAdrress(macAddress) {
+          console.log("Activating test LED for MAC:", macAddress); // For debugging
+      
+          fetch('/api/activateTestLedByMacAdrress', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ macAddress: macAddress })
+          })
+          .then(response => response.text())
+          .then(data => {
+              console.log(data);
+              // Handle successful response
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+      }
+      </script>
 
 
     </body>
