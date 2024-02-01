@@ -50,7 +50,7 @@ function generateNavMenu(currentRoute) {
 }
 
 app.post("/api/activateTestLedByMacAdrress", (req, res) => {
-  console.log("Received body:", req.body); // Log the received body for debugging
+  console.log("Received body:", req.body); // For debugging
   const { macAddress } = req.body;
 
   if (macAddress && connectedModules[macAddress]) {
@@ -58,6 +58,9 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
       "Sending test LED activation command to module with MAC:",
       macAddress
     );
+    // Here you need to implement the actual communication to the module
+    // This could be an MQTT publish, an HTTP request to the module, etc.
+
     res
       .status(200)
       .send(
@@ -66,7 +69,7 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
   } else {
     res.status(404).send("Module with specified MAC address not found");
   }
-});
+});k
 
 app.post("/api/register", (req, res) => {
   const { id, macAddress } = req.body;
