@@ -52,13 +52,10 @@ function generateNavMenu(currentRoute) {
 app.post("/api/activateTestLedByMacAdrress", (req, res) => {
   const { macAddress } = req.body;
   if (connectedModules[macAddress]) {
-    // Logic to send a command to the specific module to activate the test LED
     console.log(
       "Sending test LED activation command to module with MAC:",
       macAddress
     );
-    // TODO: Implement the actual LED activation command here
-
     res
       .status(200)
       .send(
@@ -144,7 +141,7 @@ app.get("/testresult", (req, res) => {
             <p>Status: ${
               details.status === "success" ? "success" : "failed"
             }</p>
-            <p>Mac Address: ${details.macAddress}</p>
+            <p>Mac Address: ${moduleId}</p>
             <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
             <button onclick="activateTestLedByMacAdrress('${
               details.macAddress
