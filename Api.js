@@ -70,9 +70,10 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, ipAddress } = req.body;
-  connectedModules[macAddress] = { ipAddress, lastSeen: new Date() };
-  res.status(200).send("Module registered");
+  const { id, status, macAddress } = req.body;
+  // Now you can use the macAddress, id, and status
+  connectedModules[macAddress] = { id, status, lastSeen: new Date() };
+  res.status(200).send("Module registered with MAC address: " + macAddress);
 });
 
 app.get("/api/modules", (req, res) => {
