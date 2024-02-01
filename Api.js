@@ -49,9 +49,22 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
+app.post("/api/activateTestLed", (req, res) => {
+  const { macAddress } = req.body;
+  if (connectedModules[macAddress]) {
+    res
+      .status(200)
+      .send(
+        "Test LED activation command sent to module with MAC: " + macAddress
+      );
+  } else {
+    res.status(404).send("Module with specified MAC address not found");
+  }
+});
+
 app.post("/api/register", (req, res) => {
   const { id, ipAddress } = req.body;
-  connectedModules[id] = { ipAddress, lastSeen: new Date() };
+  connectedModules[macAddress] = { ipAddress, lastSeen: new Date() };
   res.status(200).send("Module registered");
 });
 
