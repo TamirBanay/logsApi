@@ -221,6 +221,8 @@ app.get("/testresult", (req, res) => {
       </script>
     <script>
     function activateTestLedByMacAdrress(macAddress) {
+        console.log("Activating test LED for MAC: " + macAddress); // For debugging
+
         fetch('/api/activateTestLedByMacAdrress', {
             method: 'POST',
             headers: {
