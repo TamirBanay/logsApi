@@ -49,7 +49,7 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
-app.post("/api/activateTestLed", (req, res) => {
+app.post("/api/activateTestLedByMacAdrress", (req, res) => {
   const { macAddress } = req.body;
   if (connectedModules[macAddress]) {
     // Logic to send a command to the specific module to activate the test LED
@@ -144,7 +144,7 @@ app.get("/testresult", (req, res) => {
               details.status === "success" ? "success" : "failed"
             }</p>
             <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
-            <button onclick="activateTestLed('${
+            <button onclick="activateTestLedByMacAdrress('${
               details.macAddress
             }')">Activate Test LED</button>
         </div>
@@ -220,8 +220,8 @@ app.get("/testresult", (req, res) => {
         });
       </script>
     <script>
-    function activateTestLed(macAddress) {
-        fetch('/api/activateTestLed', {
+    function activateTestLedByMacAdrress(macAddress) {
+        fetch('/api/activateTestLedByMacAdrress', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
