@@ -72,8 +72,8 @@ app.post("/api/register", (req, res) => {
   connectedModules[macAddress] = {
     id,
     status,
-    lastSeen: new Date(),
     macAddress,
+    lastSeen: new Date(),
   };
   res.status(200).send("Module registered with MAC address: " + macAddress);
 });
@@ -142,6 +142,10 @@ app.get("/testresult", (req, res) => {
     .map(
       ([moduleId, details]) => `
         <div class="module">
+        console.log(details);
+
+        console.log(details.macAddress);
+
             <p>Module ID: ${moduleId}</p>
             <p>Status: ${
               details.status === "success" ? "success" : "failed"
