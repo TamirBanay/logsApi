@@ -205,20 +205,20 @@ app.get("/testresult", (req, res) => {
 
     ${detailsHtml}
     <button id="changeButton">Trigger LEDs</button>
-    //   <script>
-    //     document.getElementById('changeButton').addEventListener('click', function() {
-    //       fetch('/changeLedValue', { method: 'POST' })
-    //         .then(response => response.text())
-    //         .then(data => {
-    //           console.log(data);
-    //           document.getElementById('changeButton').textContent = 'LEDs Triggered';
-    //           document.getElementById('changeButton').disabled = true;
-    //         })
-    //         .catch(error => {
-    //           console.error('Error:', error);
-    //         });
-    //     });
-    //   </script>
+      <script>
+        document.getElementById('changeButton').addEventListener('click', function() {
+          fetch('/changeLedValue', { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+              console.log(data);
+              document.getElementById('changeButton').textContent = 'LEDs Triggered';
+              document.getElementById('changeButton').disabled = true;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+      </script>
     <script>
     function activateTestLed(macAddress) {
         fetch('/api/activateTestLed', {
