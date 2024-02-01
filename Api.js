@@ -50,8 +50,10 @@ function generateNavMenu(currentRoute) {
 }
 
 app.post("/api/activateTestLedByMacAdrress", (req, res) => {
+  console.log("Received body:", req.body); // Log the received body for debugging
   const { macAddress } = req.body;
-  if (connectedModules[macAddress]) {
+
+  if (macAddress && connectedModules[macAddress]) {
     console.log(
       "Sending test LED activation command to module with MAC:",
       macAddress
@@ -67,15 +69,13 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, status, macAddress } = req.body;
-  // Now you can use the macAddress, id, and status
+  const { id, macAddress } = req.body;
   connectedModules[macAddress] = {
     id,
-    status,
-    macAddress,
     lastSeen: new Date(),
-  };
-  res.status(200).send("Module registered with MAC address: " + macAddress);
+    macAddress: macAddress,
+  }; // Ensure MAC address is stored
+  res.status(200).send("Module registered");
 });
 
 app.get("/api/modules", (req, res) => {
@@ -142,19 +142,16 @@ app.get("/testresult", (req, res) => {
     .map(
       ([moduleId, details]) => `
         <div class="module">
-        console.log(details);
-
-        console.log(details.macAddress);
-
             <p>Module ID: ${moduleId}</p>
             <p>Status: ${
               details.status === "success" ? "success" : "failed"
             }</p>
             <p>Mac Address: ${details.macAddress}</p>
             <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
-            <button onclick="activateTestLedByMacAdrress('${
+            <button onclick="activateTestLed('${
               details.macAddress
             }')">Activate Test LED</button>
+
         </div>
     `
     )
@@ -229,24 +226,25 @@ app.get("/testresult", (req, res) => {
       </script>
     <script>
     function activateTestLedByMacAdrress(macAddress) {
-        console.log("Activating test LED for MAC: " + macAddress); // For debugging
-
+        console.log("Activating test LED for MAC:", macAddress); // For debugging
+    
         fetch('/api/activateTestLedByMacAdrress', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ macAddress: macAddress })
+            body: JSON.stringify({ macAddress: macAddress }) // Make sure this line is correct
         })
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            alert("LED activation command sent to module with MAC: " + macAddress);
+            // Handle successful response
         })
         .catch(error => {
             console.error('Error:', error);
         });
     }
+    
 </script>
 
 
