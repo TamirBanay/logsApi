@@ -148,9 +148,10 @@ app.get("/testresult", (req, res) => {
           <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
           <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
-          <button onclick="activateTestLedByMacAdrress ('${
+          <button onclick="activateTestLedByMacAdrress('${
             details.macAddress
           }')">Activate Test LED</button>
+
       </div>
     `
     )
@@ -225,15 +226,15 @@ app.get("/testresult", (req, res) => {
       </script>
       <script>
       function activateTestLedByMacAdrress(macAddress) {
-          console.log("Activating test LED for MAC:", macAddress); // For debugging
+        console.log("Activating test LED for MAC:", macAddress); // This should show the MAC address
       
-          fetch('/api/activateTestLedByMacAdrress', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ macAddress: macAddress })
-          })
+        fetch('/api/activateTestLedByMacAdrress', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ macAddress: macAddress })
+        })
           .then(response => response.text())
           .then(data => {
               console.log(data);
