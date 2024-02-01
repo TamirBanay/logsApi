@@ -52,6 +52,13 @@ function generateNavMenu(currentRoute) {
 app.post("/api/activateTestLed", (req, res) => {
   const { macAddress } = req.body;
   if (connectedModules[macAddress]) {
+    // Logic to send a command to the specific module to activate the test LED
+    console.log(
+      "Sending test LED activation command to module with MAC:",
+      macAddress
+    );
+    // TODO: Implement the actual LED activation command here
+
     res
       .status(200)
       .send(
@@ -112,7 +119,7 @@ function checkModuleStatus() {
 }
 
 app.get("/testresult", (req, res) => {
-  checkModuleStatus();
+  checkModuleStatus(); // This function updates the status of each module
   let currentTime = new Date();
 
   for (let moduleId in connectedModules) {
@@ -131,14 +138,18 @@ app.get("/testresult", (req, res) => {
   let detailsHtml = Object.entries(connectedModules)
     .map(
       ([moduleId, details]) => `
-  <div class="module">
-    <p>Module ID: ${moduleId}</p>
-    <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
-    <p>Last Seen: ${new Date(details.lastSeen).toLocaleString() + 2}</p>
-  </div>
-`
+        <div class="module">
+            <p>Module ID: ${moduleId}</p>
+            <p>Status: ${
+              details.status === "success" ? "success" : "failed"
+            }</p>
+            <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
+            <button onclick="activateTestLed('${
+              details.macAddress
+            }')">Activate Test LED</button>
+        </div>
+    `
     )
-
     .join("");
 
   if (!detailsHtml) {
@@ -194,20 +205,41 @@ app.get("/testresult", (req, res) => {
 
     ${detailsHtml}
     <button id="changeButton">Trigger LEDs</button>
-      <script>
-        document.getElementById('changeButton').addEventListener('click', function() {
-          fetch('/changeLedValue', { method: 'POST' })
-            .then(response => response.text())
-            .then(data => {
-              console.log(data);
-              document.getElementById('changeButton').textContent = 'LEDs Triggered';
-              document.getElementById('changeButton').disabled = true;
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
+    //   <script>
+    //     document.getElementById('changeButton').addEventListener('click', function() {
+    //       fetch('/changeLedValue', { method: 'POST' })
+    //         .then(response => response.text())
+    //         .then(data => {
+    //           console.log(data);
+    //           document.getElementById('changeButton').textContent = 'LEDs Triggered';
+    //           document.getElementById('changeButton').disabled = true;
+    //         })
+    //         .catch(error => {
+    //           console.error('Error:', error);
+    //         });
+    //     });
+    //   </script>
+    <script>
+    function activateTestLed(macAddress) {
+        fetch('/api/activateTestLed', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ macAddress: macAddress })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            alert("LED activation command sent to module with MAC: " + macAddress);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-      </script>
+    }
+</script>
+
+
     </body>
     </html>`);
 });
