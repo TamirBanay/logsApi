@@ -69,7 +69,12 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 app.post("/api/register", (req, res) => {
   const { id, status, macAddress } = req.body;
   // Now you can use the macAddress, id, and status
-  connectedModules[macAddress] = { id, status, lastSeen: new Date() };
+  connectedModules[macAddress] = {
+    id,
+    status,
+    lastSeen: new Date(),
+    macAddress,
+  };
   res.status(200).send("Module registered with MAC address: " + macAddress);
 });
 
@@ -123,7 +128,7 @@ app.get("/testresult", (req, res) => {
   for (let moduleId in connectedModules) {
     let module = connectedModules[moduleId];
     let lastSeenTime = new Date(module.lastSeen);
-    lastSeenTime.setHours(lastSeenTime.getHours() + 2);
+    lastSeenTime.setHours(lastSeenTime.getHours());
     const TIMEOUT_THRESHOLD = 5000;
     if (
       currentTime - lastSeenTime > TIMEOUT_THRESHOLD &&
@@ -141,7 +146,7 @@ app.get("/testresult", (req, res) => {
             <p>Status: ${
               details.status === "success" ? "success" : "failed"
             }</p>
-            <p>Mac Address: ${moduleId}</p>
+            <p>Mac Address: ${details.macAddress}</p>
             <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
             <button onclick="activateTestLedByMacAdrress('${
               details.macAddress
