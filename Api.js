@@ -82,6 +82,7 @@ app.post("/api/register", (req, res) => {
 
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
+  console.log(connectedModules);
 });
 
 let myBoolean = false;
