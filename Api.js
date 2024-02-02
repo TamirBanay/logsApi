@@ -70,11 +70,12 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { moduleName, macAddress } = req.body;
+  const { moduleName, macAddress, ipAddress } = req.body;
   connectedModules[macAddress] = {
     moduleName,
     lastSeen: new Date(),
     macAddress: macAddress,
+    ipAddress: ipAddress,
   };
   res.status(200).send("Module registered");
 });
@@ -92,7 +93,7 @@ app.post("/notifySuccess", (req, res) => {
       status,
       moduleName,
       ipAddress,
-      lastSeen: new Date(),
+      lastSeen: new Date() + 2,
     };
     res.status(200).send("Success notification received for " + moduleName);
   } else {
@@ -148,11 +149,11 @@ app.get("/testresult", (req, res) => {
     .map(
       ([moduleId, details]) => `
       <div class="module">
-          <p>Module ID: ${details.moduleName}</p>
+          <p>Module Name: ${details.moduleName}</p>
           <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
           <p>Ip Address: ${details.ipAddress}</p>
-          <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
+          <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
           <button onclick="activateTestLedByMacAdrress('${
             details.macAddress
           }')">Activate Test LED</button>
