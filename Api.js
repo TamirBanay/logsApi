@@ -87,9 +87,9 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { id, status, h } = req.body;
-  if ((id && status, h)) {
-    connectedModules[id] = { status, lastSeen: new Date(), h };
+  const { id, status } = req.body;
+  if (id && status) {
+    connectedModules[id] = { status, lastSeen: new Date() };
     res.status(200).send("Success notification received");
   } else {
     res.status(400).send("ID or status missing");
