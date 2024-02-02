@@ -151,6 +151,7 @@ app.get("/testresult", (req, res) => {
           <p>Module ID: ${details.moduleName}</p>
           <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
+          <p>Ip Address: ${details.ipAddress}</p>
           <p>Last Seen: ${new Date(details.lastSeen + 2).toLocaleString()}</p>
           <button onclick="activateTestLedByMacAdrress('${
             details.macAddress
