@@ -329,7 +329,7 @@ app.get("/", (req, res) => {
                               const moduleDiv = document.createElement('div');
                               moduleDiv.classList.add('module');
                               moduleDiv.innerHTML = \`
-                                  <strong>Module ID:</strong> \${id}<br />
+                                  <strong>Module ID:</strong> \${details.moduleName}<br />
                                   <strong>Ip Address:</strong> \${details.ipAddress  || 'Not Available'}<br />
                                   <strong>Mac Address:</strong> \${details.macAddress  || 'Not Available'}<br />
                                   <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
