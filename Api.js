@@ -76,13 +76,13 @@ app.post("/api/register", (req, res) => {
     id,
     lastSeen: new Date(),
     macAddress: macAddress,
-  }; // Ensure MAC address is stored
+  };
   res.status(200).send("Module registered");
 });
 
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
-  console.log(connectedModules);
+  console.log(json(connectedModules));
 });
 
 let myBoolean = false;
@@ -125,7 +125,7 @@ function checkModuleStatus() {
 }
 
 app.get("/testresult", (req, res) => {
-  checkModuleStatus(); // This function updates the status of each module
+  checkModuleStatus();
   let currentTime = new Date();
 
   for (let moduleId in connectedModules) {
