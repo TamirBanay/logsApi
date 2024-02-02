@@ -149,7 +149,7 @@ app.get("/testresult", (req, res) => {
       ([moduleId, details]) => `
       <div class="module">
           <p>Module Name: ${details.moduleName}</p>
-          <p>Status: ${module.status === "success" ? "success" : "failed"}</p>
+          <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
           <p>Ip Address: ${details.ipAddress}</p>
           <p>Last Seen: ${new Date(details.lastSeen).toLocaleString()}</p>
