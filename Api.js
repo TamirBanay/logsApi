@@ -81,18 +81,17 @@ app.post("/api/register", (req, res) => {
 
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
-  console.log(json(connectedModules));
 });
 
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { id, status } = req.body;
-  if (id && status) {
-    connectedModules[id] = { status, lastSeen: new Date() };
-    res.status(200).send("Success notification received");
+  const { macAddress, status, moduleName } = req.body;
+  if (macAddress && status && moduleName) {
+    connectedModules[macAddress] = { status, moduleName, lastSeen: new Date() };
+    res.status(200).send("Success notification received for " + moduleName);
   } else {
-    res.status(400).send("ID or status missing");
+    res.status(400).send("MAC address, module name, or status missing");
   }
 });
 
