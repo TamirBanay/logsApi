@@ -49,9 +49,8 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
-// ... previous code ...
 app.post("/api/activateTestLedByMacAdrress", (req, res) => {
-  console.log("Received body:", req.body); // Log the received body for debugging
+  console.log("Received body:", req.body);
   const { macAddress } = req.body;
 
   if (macAddress && connectedModules[macAddress]) {
@@ -84,7 +83,7 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
-let myBoolean = false;
+let testLedIndecator = false;
 
 app.post("/notifySuccess", (req, res) => {
   const { macAddress, status, moduleName, ipAddress } = req.body;
@@ -102,15 +101,15 @@ app.post("/notifySuccess", (req, res) => {
 });
 
 app.get("/testLed", (req, res) => {
-  res.json(myBoolean);
+  res.json(testLedIndecator);
 });
 
 app.post("/changeLedValue", (req, res) => {
-  myBoolean = true;
+  testLedIndecator = true;
   res.send("Value changed to true");
 
   setTimeout(() => {
-    myBoolean = false;
+    testLedIndecator = false;
     console.log("Value reverted to false");
   }, 3000);
 });
@@ -150,6 +149,7 @@ app.get("/testresult", (req, res) => {
       ([moduleId, details]) => `
       <div class="module">
           <p>Module Name: ${details.moduleName}</p>
+          <p>Module ID: ${moduleId}</p>
           <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
           <p>Ip Address: ${details.ipAddress}</p>
