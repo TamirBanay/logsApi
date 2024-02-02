@@ -87,7 +87,7 @@ let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
   const { macAddress, status, moduleName, ipAddress } = req.body;
-  if (macAddress && status && moduleName) {
+  if (macAddress && status && moduleName && ipAddress) {
     connectedModules[macAddress] = {
       status,
       moduleName,
@@ -334,7 +334,7 @@ app.get("/", (req, res) => {
                               const moduleDiv = document.createElement('div');
                               moduleDiv.classList.add('module');
                               moduleDiv.innerHTML = \`
-                                  <strong>Module ID:</strong> \${details.moduleName}<br />
+                                  <strong>Module Name:</strong> \${details.moduleName}<br />
                                   <strong>Ip Address:</strong> \${details.ipAddress  || 'Not Available'}<br />
                                   <strong>Mac Address:</strong> \${details.macAddress  || 'Not Available'}<br />
                                   <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
