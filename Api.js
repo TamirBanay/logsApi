@@ -86,9 +86,14 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { macAddress, status, moduleName } = req.body;
+  const { macAddress, status, moduleName, ipAddress } = req.body;
   if (macAddress && status && moduleName) {
-    connectedModules[macAddress] = { status, moduleName, lastSeen: new Date() };
+    connectedModules[macAddress] = {
+      status,
+      moduleName,
+      ipAddress,
+      lastSeen: new Date(),
+    };
     res.status(200).send("Success notification received for " + moduleName);
   } else {
     res.status(400).send("MAC address, module name, or status missing");
