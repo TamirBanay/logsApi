@@ -68,7 +68,6 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
     res.status(404).send("Module with specified MAC address not found");
   }
 });
-// ... following code ...
 
 app.post("/api/register", (req, res) => {
   const { id, macAddress } = req.body;
@@ -88,9 +87,9 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { id, status } = req.body;
-  if (id && status) {
-    connectedModules[id] = { status, lastSeen: new Date() };
+  const { id, status, h } = req.body;
+  if ((id && status, h)) {
+    connectedModules[id] = { status, lastSeen: new Date(), h };
     res.status(200).send("Success notification received");
   } else {
     res.status(400).send("ID or status missing");
