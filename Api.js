@@ -72,7 +72,7 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 app.post("/api/register", (req, res) => {
   const { moduleName, macAddress } = req.body;
   connectedModules[macAddress] = {
-    id,
+    moduleName,
     lastSeen: new Date(),
     macAddress: macAddress,
   };
