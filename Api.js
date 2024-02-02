@@ -70,7 +70,7 @@ app.post("/api/activateTestLedByMacAdrress", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
-  const { id, macAddress } = req.body;
+  const { moduleName, macAddress } = req.body;
   connectedModules[macAddress] = {
     id,
     lastSeen: new Date(),
@@ -86,15 +86,14 @@ app.get("/api/modules", (req, res) => {
 let myBoolean = false;
 
 app.post("/notifySuccess", (req, res) => {
-    const { macAddress, status, moduleName } = req.body;
-    if (macAddress && status && moduleName) {
-      connectedModules[macAddress] = { status, moduleName, lastSeen: new Date() };
-      res.status(200).send("Success notification received for " + moduleName);
-    } else {
-      res.status(400).send("MAC address, module name, or status missing");
-    }
-  });
-  
+  const { macAddress, status, moduleName } = req.body;
+  if (macAddress && status && moduleName) {
+    connectedModules[macAddress] = { status, moduleName, lastSeen: new Date() };
+    res.status(200).send("Success notification received for " + moduleName);
+  } else {
+    res.status(400).send("MAC address, module name, or status missing");
+  }
+});
 
 app.get("/testLed", (req, res) => {
   res.json(myBoolean);
