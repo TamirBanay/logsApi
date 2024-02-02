@@ -332,6 +332,7 @@ app.get("/", (req, res) => {
                               moduleDiv.innerHTML = \`
                                   <strong>Module ID:</strong> \${id}<br />
                                   <strong>Ip Address:</strong> \${details.ipAddress  || 'Not Available'}<br />
+                                  <strong>Mac Address:</strong> \${details.macAddress  || 'Not Available'}<br />
                                   <strong>Last Seen:</strong> \${new Date(details.lastSeen).toLocaleString()}
                               \`;
                               modulesInfo.appendChild(moduleDiv);
