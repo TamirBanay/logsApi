@@ -122,7 +122,7 @@ function checkModuleStatus() {
     const TIMEOUT_THRESHOLD = 30000;
 
     if (timeSinceLastSeen > TIMEOUT_THRESHOLD) {
-      connectedModules[details.macAddress].status = "failed";
+      connectedModules[moduleId].status = "failed";
     }
   });
 }
@@ -132,7 +132,7 @@ app.get("/testresult", (req, res) => {
   let currentTime = new Date();
 
   for (let moduleId in connectedModules) {
-    let module = connectedModules[details.macAddress];
+    let module = connectedModules[moduleId];
     let lastSeenTime = new Date(module.lastSeen);
     lastSeenTime.setHours(lastSeenTime.getHours());
     const TIMEOUT_THRESHOLD = 5000;
@@ -149,6 +149,7 @@ app.get("/testresult", (req, res) => {
       ([moduleId, details]) => `
       <div class="module">
           <p>Module Name: ${details.moduleName}</p>
+          
           <p>Status: ${details.status === "success" ? "success" : "failed"}</p>
           <p>Mac Address: ${details.macAddress}</p>
           <p>Ip Address: ${details.ipAddress}</p>
