@@ -7,6 +7,13 @@ let connectedModules = {};
 
 app.use(express.json());
 
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "http://localhost:3001", // or '*' for any domain
+  })
+);
+
 app.post("/api/logs", (req, res) => {
   try {
     console.log("Log received:", req.body);
@@ -325,7 +332,8 @@ app.get("/", (req, res) => {
           <div id="modulesInfo"></div>
   
           <script>
-              document.getElementById('fetchModules').onclick = function() {
+              document.getElementById('fetchModules').onclick = function() 
+              {
                   fetch('/api/modules')
                       .then(response => response.json())
                       .then(data => {
