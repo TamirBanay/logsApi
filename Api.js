@@ -93,24 +93,23 @@ app.get("/api/modules", (req, res) => {
 let testLedIndecator = false;
 
 app.post("/notifySuccess", (req, res) => {
-  const { macAddress, status, moduleName, ipAddress } = req.body;
-  if (macAddress && status && moduleName && ipAddress) {
-    connectedModules[macAddress] = {
-      status,
-      moduleName,
-      ipAddress,
-      lastSeen: new Date(new Date().getTime() + 2),
-    };
-    // Sending a JSON response
-    res.status(200).json({
-      message: "Success notification received for " + moduleName,
-      module: connectedModules[macAddress],
-    });
-  } else {
-    res.status(400).send("MAC address, module name, or status missing");
-  }
-});
-
+    const { macAddress, status, moduleName, ipAddress } = req.body;
+    if (macAddress && status && moduleName && ipAddress) {
+      connectedModules[macAddress] = {
+        status,
+        moduleName,
+        ipAddress,
+        lastSeen: new Date(new Date().getTime() + 2000), // 2000 milliseconds = 2 seconds
+      };
+      res.status(200).json({
+        message: "Success notification received for " + moduleName,
+        module: connectedModules[macAddress],
+      });
+    } else {
+      res.status(400).send("MAC address, module name, or status missing");
+    }
+  });
+  
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
 });
