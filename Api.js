@@ -120,6 +120,9 @@ app.post("/api/notifySuccess", (req, res) => {
     details: lastModuleDetails,
   });
 });
+app.get("/api/getModuleDetails", (req, res) => {
+  res.status(200).send(lastModuleDetails);
+});
 
 function checkModuleStatus() {
   const now = new Date();
