@@ -122,6 +122,7 @@ app.post("/api/notifySuccess", (req, res) => {
 });
 app.get("/api/getModuleDetails", (req, res) => {
   res.status(200).send(lastModuleDetails);
+  lastModuleDetails = [];
 });
 
 function checkModuleStatus() {
