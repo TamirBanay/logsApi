@@ -113,7 +113,7 @@ app.post("/api/notifySuccess", (req, res) => {
   console.log("Notification received:", req.body);
 
   // Store the received details
-  lastModuleDetails = { moduleName, status, macAddress };
+  lastModuleDetails.push({ moduleName, status, macAddress });
 
   res.status(200).json({
     message: "Success notification received",
@@ -122,9 +122,8 @@ app.post("/api/notifySuccess", (req, res) => {
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
-    res.json(lastModuleDetails);
+  res.json(lastModuleDetails);
 });
-
 
 function checkModuleStatus() {
   const now = new Date();
