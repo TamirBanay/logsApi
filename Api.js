@@ -38,7 +38,7 @@ app.post("/api/notifySuccess", (req, res) => {
     // Send back the received message or any other confirmation message
     res.status(200).json({
       message: "Success notification received",
-      details: testMessage,
+      details: testMessage.moduleName,
     });
   } catch (error) {
     console.error("Error handling /api/notifySuccess:", error);
