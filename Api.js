@@ -27,6 +27,14 @@ app.post("/api/logs", (req, res) => {
 app.post("/api/notifySuccess", (req, res) => {
   try {
     console.log("Log received:", req.body); // Logs the entire request body
+
+    // It's a good practice to validate the request body to make sure it contains what you expect
+    if (!req.body.macAddress || !req.body.status || !req.body.moduleName) {
+      return res
+        .status(400)
+        .send("MAC address, module name, or status missing");
+    }
+
     let testMessage = req.body; // Extracts the request body
 
     // Logs individual details from the request body
