@@ -99,9 +99,13 @@ app.post("/notifySuccess", (req, res) => {
       status,
       moduleName,
       ipAddress,
-      lastSeen: new Date() + 2,
+      lastSeen: new Date(new Date().getTime() + 2),
     };
-    res.status(200).send("Success notification received for " + moduleName);
+    // Sending a JSON response
+    res.status(200).json({
+      message: "Success notification received for " + moduleName,
+      module: connectedModules[macAddress],
+    });
   } else {
     res.status(400).send("MAC address, module name, or status missing");
   }
