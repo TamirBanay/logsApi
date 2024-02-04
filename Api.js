@@ -91,35 +91,6 @@ app.get("/api/modules", (req, res) => {
 });
 
 let testLedIndecator = false;
-// https
-//   .get("/notifySuccess", (res) => {
-//     let data = [];
-
-//     res.on("data", (chunk) => {
-//       data.push(chunk);
-//     });
-
-//     res.on("end", () => {
-//       console.log("Response ended: ");
-//       const users = JSON.parse(Buffer.concat(data).toString());
-
-//       for (let user of users) {
-//         console.log(`Got user with id: ${user.id}, name: ${user.name}`);
-//       }
-//     });
-//   })
-//   .on("error", (err) => {
-//     console.log("Error: ", err.message);
-//   });
-
-let lastModuleDetails = {}; // This object will store the last received details
-
-// ... [other server code]
-
-// Endpoint to get the last module details
-app.get("/api/getLastModuleDetails", (req, res) => {
-  res.json(lastModuleDetails);
-});
 
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
@@ -135,31 +106,25 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 
+let lastModuleDetails = {}; // This object will store the last received details
+
 app.post("/api/notifySuccess", (req, res) => {
-  try {
-    const { moduleName, status, macAddress } = req.body;
+  const { moduleName, status, macAddress } = req.body;
+  console.log("Notification received:", req.body);
 
-    if (!moduleName || !status || !macAddress) {
-      return res.status(400).json({
-        message: "Missing required fields: moduleName, status, or macAddress",
-      });
-    }
+  // Store the received details
+  lastModuleDetails = { moduleName, status, macAddress };
 
-    console.log("Notification received:", req.body);
-
-    res.status(200).json({
-      message: "Success notification received",
-      details: {
-        moduleName,
-        status,
-        macAddress,
-      },
-    });
-  } catch (error) {
-    console.error("Error handling /api/notifySuccess:", error);
-    res.status(500).send("Server error");
-  }
+  res.status(200).json({
+    message: "Success notification received",
+    details: lastModuleDetails,
+  });
 });
+
+app.get("/api/getModuleDetails", (req, res) => {
+    res.json(lastModuleDetails);
+});
+
 
 function checkModuleStatus() {
   const now = new Date();
