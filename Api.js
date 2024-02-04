@@ -29,7 +29,7 @@ app.post("/api/logs", (req, res) => {
 app.post("/api/notifySuccess", (req, res) => {
   try {
     console.log("Log received:", req.body);
-    testMassage = req.body;
+    testMassage = "Get!!!";
     res.status(200).send(testMassage);
   } catch (error) {
     console.error("Error handling /api/notifySuccess:", error);
