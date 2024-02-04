@@ -24,24 +24,6 @@ app.post("/api/logs", (req, res) => {
     res.status(500).send("Server error");
   }
 });
-app.post("/api/notifySuccess", (req, res) => {
-  try {
-    const { moduleName, status, macAddress } = req.body;
-    console.log("Notification received:", req.body);
-
-    res.status(200).json({
-      message: "Success notification received",
-      details: {
-        moduleName,
-        status,
-        macAddress,
-      },
-    });
-  } catch (error) {
-    console.error("Error handling /api/notifySuccess:", error);
-    res.status(500).send("Server error");
-  }
-});
 
 function generateNavMenu(currentRoute) {
   return `
@@ -142,6 +124,32 @@ app.post("/changeLedValue", (req, res) => {
     testLedIndecator = false;
     console.log("Value reverted to false");
   }, 3000);
+});
+
+app.post("/api/notifySuccess", (req, res) => {
+  try {
+    const { moduleName, status, macAddress } = req.body;
+
+    if (!moduleName || !status || !macAddress) {
+      return res.status(400).json({
+        message: "Missing required fields: moduleName, status, or macAddress",
+      });
+    }
+
+    console.log("Notification received:", req.body);
+
+    res.status(200).json({
+      message: "Success notification received",
+      details: {
+        moduleName,
+        status,
+        macAddress,
+      },
+    });
+  } catch (error) {
+    console.error("Error handling /api/notifySuccess:", error);
+    res.status(500).send("Server error");
+  }
 });
 
 function checkModuleStatus() {
