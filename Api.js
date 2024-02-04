@@ -106,14 +106,14 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 
-let lastModuleDetails = {}; // This object will store the last received details
+let lastModuleDetails = []; // This object will store the last received details
 
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
   console.log("Notification received:", req.body);
 
   // Store the received details
-  lastModuleDetails = { moduleName, status, macAddress };
+  lastModuleDetails.push(moduleName, status, macAddress);
 
   res.status(200).json({
     message: "Success notification received",
