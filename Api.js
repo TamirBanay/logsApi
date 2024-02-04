@@ -26,17 +26,16 @@ app.post("/api/logs", (req, res) => {
 });
 app.post("/api/notifySuccess", (req, res) => {
   try {
-    console.log("Log received:", req.body); // Logs the entire request body
-    let testMessage = req.body; // Extracts the request body
-
-    // Logs individual details from the request body
-    console.log(`Module Name: ${testMessage.moduleName}`); // Logs the module name
-    console.log(`Status: ${testMessage.status}`);
-    console.log(`MAC Address: ${testMessage.macAddress}`);
+    const { moduleName, status, macAddress } = req.body;
+    console.log("Notification received:", req.body);
 
     res.status(200).json({
       message: "Success notification received",
-      details: testMessage,
+      details: {
+        moduleName,
+        status,
+        macAddress,
+      },
     });
   } catch (error) {
     console.error("Error handling /api/notifySuccess:", error);
