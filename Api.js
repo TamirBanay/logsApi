@@ -4,7 +4,8 @@ const port = 3000;
 
 const logs = [];
 let connectedModules = {};
-
+const https = require("https");
+testMassage = "";
 app.use(express.json());
 
 const cors = require("cors");
@@ -21,6 +22,17 @@ app.post("/api/logs", (req, res) => {
     res.status(200).send(logs);
   } catch (error) {
     console.error("Error handling /api/logs:", error);
+    res.status(500).send("Server error");
+  }
+});
+
+app.post("/api/notifySuccess", (req, res) => {
+  try {
+    console.log("Log received:", req.body);
+    testMassage = req.body;
+    res.status(200).send(testMassage);
+  } catch (error) {
+    console.error("Error handling /api/notifySuccess:", error);
     res.status(500).send("Server error");
   }
 });
@@ -91,25 +103,27 @@ app.get("/api/modules", (req, res) => {
 });
 
 let testLedIndecator = false;
+// https
+//   .get("/notifySuccess", (res) => {
+//     let data = [];
 
-app.post("/notifySuccess", (req, res) => {
-    const { macAddress, status, moduleName, ipAddress } = req.body;
-    if (macAddress && status && moduleName && ipAddress) {
-      connectedModules[macAddress] = {
-        status,
-        moduleName,
-        ipAddress,
-        lastSeen: new Date(new Date().getTime() + 2000), // 2000 milliseconds = 2 seconds
-      };
-      res.status(200).json({
-        message: "Success notification received for " + moduleName,
-        module: connectedModules[macAddress],
-      });
-    } else {
-      res.status(400).send("MAC address, module name, or status missing");
-    }
-  });
-  
+//     res.on("data", (chunk) => {
+//       data.push(chunk);
+//     });
+
+//     res.on("end", () => {
+//       console.log("Response ended: ");
+//       const users = JSON.parse(Buffer.concat(data).toString());
+
+//       for (let user of users) {
+//         console.log(`Got user with id: ${user.id}, name: ${user.name}`);
+//       }
+//     });
+//   })
+//   .on("error", (err) => {
+//     console.log("Error: ", err.message);
+//   });
+
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
 });
