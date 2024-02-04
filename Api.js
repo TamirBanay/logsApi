@@ -113,7 +113,7 @@ app.post("/api/notifySuccess", (req, res) => {
   console.log("Notification received:", req.body);
 
   // Store the received details
-  lastModuleDetails.push({ moduleName, status, macAddress });
+  lastModuleDetails[macAddress] = { moduleName, status, macAddress };
 
   res.status(200).json({
     message: "Success notification received",
