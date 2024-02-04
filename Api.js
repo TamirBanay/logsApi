@@ -112,6 +112,15 @@ let testLedIndecator = false;
 //     console.log("Error: ", err.message);
 //   });
 
+let lastModuleDetails = {}; // This object will store the last received details
+
+// ... [other server code]
+
+// Endpoint to get the last module details
+app.get("/api/getLastModuleDetails", (req, res) => {
+  res.json(lastModuleDetails);
+});
+
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
 });
