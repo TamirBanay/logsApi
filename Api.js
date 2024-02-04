@@ -25,12 +25,21 @@ app.post("/api/logs", (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
 app.post("/api/notifySuccess", (req, res) => {
   try {
     console.log("Log received:", req.body);
-    testMassage = req.body;
-    res.status(200).send(testMassage);
+    let testMessage = req.body; // Assuming your server correctly parses incoming JSON into the req.body object
+
+    // You can log the received details more clearly like this:
+    console.log(`Module Name: ${testMessage.moduleName}`);
+    console.log(`Status: ${testMessage.status}`);
+    console.log(`MAC Address: ${testMessage.macAddress}`);
+
+    // Send back the received message or any other confirmation message
+    res.status(200).json({
+      message: "Success notification received",
+      details: testMessage,
+    });
   } catch (error) {
     console.error("Error handling /api/notifySuccess:", error);
     res.status(500).send("Server error");
