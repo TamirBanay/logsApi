@@ -5,7 +5,6 @@ const port = 3000;
 const logs = [];
 let connectedModules = {};
 const https = require("https");
-testMassage = "";
 app.use(express.json());
 
 const cors = require("cors");
@@ -35,7 +34,6 @@ app.post("/api/notifySuccess", (req, res) => {
     console.log(`Status: ${testMessage.status}`);
     console.log(`MAC Address: ${testMessage.macAddress}`);
 
-    // Responds with a success message and the received details
     res.status(200).json({
       message: "Success notification received",
       details: testMessage,
