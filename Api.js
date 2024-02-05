@@ -120,9 +120,18 @@ app.post("/api/notifySuccess", (req, res) => {
     details: lastModuleDetails,
   });
 });
+// ... (other code)
 app.get("/api/getModuleDetails", (req, res) => {
   res.status(200).send(lastModuleDetails);
-  lastModuleDetails = [];
+});
+
+app.post("/api/confirmReceipt", (req, res) => {
+  const { sessionId } = req.body;
+  // Clear the details related to the provided sessionId
+  lastModuleDetails = lastModuleDetails.filter(
+    (detail) => detail.sessionId !== sessionId
+  );
+  res.status(200).send("Details cleared for session: " + sessionId);
 });
 
 function checkModuleStatus() {
