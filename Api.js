@@ -128,6 +128,11 @@ app.post("/api/notifySuccess", (req, res) => {
 app.get("/api/getModuleDetails", (req, res) => {
   res.status(200).send(lastModuleDetails);
 });
+app.post("/api/clearModuleDetails", (req, res) => {
+  // Clear the array when this endpoint is called
+  lastModuleDetails = [];
+  res.status(200).send("Module details cleared");
+});
 
 app.post("/api/confirmReceipt", (req, res) => {
   const { sessionId } = req.body;
