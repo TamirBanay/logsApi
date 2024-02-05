@@ -113,16 +113,11 @@ let detailsTimeout;
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
   console.log("Notification received for MAC:", macAddress);
-  if (lastModuleDetails[macAddress] == null) {
-    lastModuleDetails[macAddress] = { moduleName, status, macAddress };
-    if (!detailsTimeout) {
-      detailsTimeout = setTimeout(() => {
-        console.log("Sending out collected module details:", lastModuleDetails);
-
-        lastModuleDetails = {};
-        detailsTimeout = null;
-      }, 20000);
-    }
+  let exists = lastModuleDetails.some(
+    (obj) => obj.macAddress === newObject.macAddress
+  );
+  if (exists) {
+    lastModuleDetails.push({ moduleName, status, macAddress });
   }
 
   res.status(200).json({ message: "Module details received and recorded." });
