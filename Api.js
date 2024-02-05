@@ -106,41 +106,33 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 
-let lastModuleDetails = []; // This object will store the last received details
+let lastModuleDetails = [];
 
-const { v4: uuidv4 } = require("uuid"); // This is assuming you're using the 'uuid' npm package.
+let detailsTimeout;
 
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
-  const sessionId = uuidv4(); // Generate a unique session ID.
+  console.log("Notification received for MAC:", macAddress);
 
-  console.log("Notification received:", req.body);
+  lastModuleDetails[macAddress] = { moduleName, status, macAddress };
 
-  // Store the received details with a unique sessionId.
-  lastModuleDetails.push({ ...req.body, sessionId });
+  if (!detailsTimeout) {
+    detailsTimeout = setTimeout(() => {
 
-  res.status(200).json({
-    message: "Success notification received",
-    details: lastModuleDetails,
-  });
+      console.log("Sending out collected module details:", lastModuleDetails);
+
+      lastModuleDetails = {};
+      detailsTimeout = null; 
+    }, 20000); 
+  }
+
+  res.status(200).json({ message: "Module details received and recorded." });
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
-  res.status(200).send(lastModuleDetails);
-});
-app.post("/api/clearModuleDetails", (req, res) => {
-  // Clear the array when this endpoint is called
-  lastModuleDetails = [];
-  res.status(200).send("Module details cleared");
-});
-
-app.post("/api/confirmReceipt", (req, res) => {
-  const { sessionId } = req.body;
-  // Clear the details related to the provided sessionId
-  lastModuleDetails = lastModuleDetails.filter(
-    (detail) => detail.sessionId !== sessionId
-  );
-  res.status(200).send("Details cleared for session: " + sessionId);
+  res
+    .status(200)
+    .send("This endpoint would serve the collected module details.");
 });
 
 function checkModuleStatus() {
