@@ -108,17 +108,31 @@ app.post("/changeLedValue", (req, res) => {
 
 let lastModuleDetails = [];
 
-let detailsTimeout;
+// Initialize or clear the lastModuleDetails array when starting a new test session
+app.post("/api/startTestSession", (req, res) => {
+  lastModuleDetails = [];
+  res.status(200).json({ message: "New test session started, data cleared." });
+});
 
+// Collect module details
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
-  console.log("Notification received for MAC:", macAddress);
+
   let exists = lastModuleDetails.some((obj) => obj.macAddress === macAddress);
   if (!exists) {
     lastModuleDetails.push({ moduleName, status, macAddress });
   }
 
   res.status(200).json({ message: "Module details received and recorded." });
+});
+
+// End the test session, send results, and clear the lastModuleDetails
+app.post("/api/endTestSession", (req, res) => {
+  res.status(200).json({
+    message: "Test session ended, data sent.",
+    data: lastModuleDetails,
+  });
+  lastModuleDetails = []; // Clear the array after sending the data
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
