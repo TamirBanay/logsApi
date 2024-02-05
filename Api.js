@@ -108,19 +108,23 @@ app.post("/changeLedValue", (req, res) => {
 
 let lastModuleDetails = []; // This object will store the last received details
 
+const { v4: uuidv4 } = require("uuid"); // This is assuming you're using the 'uuid' npm package.
+
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
+  const sessionId = uuidv4(); // Generate a unique session ID.
+
   console.log("Notification received:", req.body);
 
-  // Store the received details
-  lastModuleDetails.push(req.body);
+  // Store the received details with a unique sessionId.
+  lastModuleDetails.push({ ...req.body, sessionId });
 
   res.status(200).json({
     message: "Success notification received",
     details: lastModuleDetails,
   });
 });
-// ... (other code)
+
 app.get("/api/getModuleDetails", (req, res) => {
   res.status(200).send(lastModuleDetails);
 });
