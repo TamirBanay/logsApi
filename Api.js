@@ -118,21 +118,20 @@ app.post("/api/notifySuccess", (req, res) => {
 
   if (!detailsTimeout) {
     detailsTimeout = setTimeout(() => {
-
       console.log("Sending out collected module details:", lastModuleDetails);
 
       lastModuleDetails = {};
-      detailsTimeout = null; 
-    }, 20000); 
+      detailsTimeout = null;
+    }, 20000);
   }
 
   res.status(200).json({ message: "Module details received and recorded." });
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
-  res
-    .status(200)
-    .send("This endpoint would serve the collected module details.");
+  res.json({
+    message: "This endpoint would serve the collected module details.",
+  });
 });
 
 function checkModuleStatus() {
