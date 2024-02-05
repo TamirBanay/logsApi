@@ -111,15 +111,9 @@ let lastModuleDetails = [];
 let detailsTimeout;
 
 app.post("/api/notifySuccess", (req, res) => {
-  lastModuleDetails = [];
-
   const { moduleName, status, macAddress } = req.body;
   console.log("Notification received for MAC:", macAddress);
-
-  // Check if an object with the same macAddress already exists in the array
   let exists = lastModuleDetails.some((obj) => obj.macAddress === macAddress);
-
-  // If it does not exist, add the new object to the array
   if (!exists) {
     lastModuleDetails.push({ moduleName, status, macAddress });
   }
