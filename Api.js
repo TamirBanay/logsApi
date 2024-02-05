@@ -129,9 +129,9 @@ app.post("/api/notifySuccess", (req, res) => {
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
-  res.json({
-    message: "This endpoint would serve the collected module details.",
-  });
+  res.json(lastModuleDetails);
+
+  lastModuleDetails = [];
 });
 
 function checkModuleStatus() {
