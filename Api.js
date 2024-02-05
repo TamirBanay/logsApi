@@ -111,6 +111,8 @@ let lastModuleDetails = [];
 let detailsTimeout;
 
 app.post("/api/notifySuccess", (req, res) => {
+  lastModuleDetails = [];
+
   const { moduleName, status, macAddress } = req.body;
   console.log("Notification received for MAC:", macAddress);
 
@@ -128,7 +130,6 @@ app.post("/api/notifySuccess", (req, res) => {
 app.get("/api/getModuleDetails", (req, res) => {
   res.json(lastModuleDetails);
   console.log(lastModuleDetails);
-  lastModuleDetails = [];
 });
 
 function checkModuleStatus() {
