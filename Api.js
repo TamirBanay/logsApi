@@ -89,7 +89,7 @@ app.post("/api/register", (req, res) => {
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
-d
+
 app.post("/api/checkIfModuleConnected", (req, res) => {
   res.json("ping");
 });
