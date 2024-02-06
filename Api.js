@@ -9,13 +9,28 @@ app.use(
   })
 );
 
-
-
 const logs = [];
 let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
 
+app.get("/api/pingModule", async (req, res) => {
+  const results = {};
+  for (const [macAddress, moduleDetails] of Object.entries(connectedModules)) {
+    try {
+      // Send a request to the module's specific endpoint (assuming each module has an IP and a ping endpoint)
+      const moduleResponse = await fetch(
+        `http://${moduleDetails.ipAddress}/ping`
+      );
+      const data = await moduleResponse.json();
+      results[macAddress] = data;
+    } catch (error) {
+      console.error(`Error pinging module ${macAddress}:`, error);
+      results[macAddress] = { status: "Error", details: error.message };
+    }
+  }
+  res.json(results);
+});
 
 app.post("/api/logs", (req, res) => {
   try {
@@ -59,7 +74,6 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
-
 app.post("/api/register", (req, res) => {
   const { moduleName, macAddress, ipAddress } = req.body;
   connectedModules[macAddress] = {
@@ -74,7 +88,6 @@ app.post("/api/register", (req, res) => {
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
-
 
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
