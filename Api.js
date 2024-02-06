@@ -20,7 +20,7 @@ app.get("/api/pingModule", async (req, res) => {
     try {
       // Send a request to the module's specific endpoint (assuming each module has an IP and a ping endpoint)
       const moduleResponse = await fetch(
-        `http://${moduleDetails.ipAddress}/ping`
+        `http://${moduleDetails.macAddress}/ping`
       );
       const data = await moduleResponse.json();
       results[macAddress] = data;
