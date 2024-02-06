@@ -1,18 +1,21 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-
-const logs = [];
-let connectedModules = {};
-const https = require("https");
 app.use(express.json());
-
 const cors = require("cors");
 app.use(
   cors({
     origin: "http://localhost:3001", // or '*' for any domain
   })
 );
+
+
+
+const logs = [];
+let lastModuleDetails = [];
+let connectedModules = {};
+let testLedIndecator = false;
+
 
 app.post("/api/logs", (req, res) => {
   try {
@@ -56,24 +59,6 @@ function generateNavMenu(currentRoute) {
     `;
 }
 
-app.post("/api/activateTestLedByMacAdrress", (req, res) => {
-  console.log("Received body:", req.body);
-  const { macAddress } = req.body;
-
-  if (macAddress && connectedModules[macAddress]) {
-    console.log(
-      "Sending test LED activation command to module with MAC:",
-      macAddress
-    );
-    res
-      .status(200)
-      .send(
-        "Test LED activation command sent to module with MAC: " + macAddress
-      );
-  } else {
-    res.status(404).send("Module with specified MAC address not found");
-  }
-});
 
 app.post("/api/register", (req, res) => {
   const { moduleName, macAddress, ipAddress } = req.body;
@@ -90,23 +75,6 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
-let pingStatus = false; // false means no ping, true means ping
-
-app.post("/api/sendPing", (req, res) => {
-  pingStatus = true; // Set ping status to true
-  res.json({ message: "Ping initiated." });
-});
-
-app.get("/api/checkPing", (req, res) => {
-  if (pingStatus) {
-    res.json({ message: "ping" }); // Send "ping" to the module
-    pingStatus = false; // Reset ping status after sending
-  } else {
-    res.json({ message: "no ping" }); // No ping available
-  }
-});
-
-let testLedIndecator = false;
 
 app.get("/testLed", (req, res) => {
   res.json(testLedIndecator);
@@ -122,15 +90,6 @@ app.post("/changeLedValue", (req, res) => {
   }, 3000);
 });
 
-let lastModuleDetails = [];
-
-// Initialize or clear the lastModuleDetails array when starting a new test session
-app.post("/api/startTestSession", (req, res) => {
-  lastModuleDetails = [];
-  res.status(200).json({ message: "New test session started, data cleared." });
-});
-
-// Collect module details
 app.post("/api/notifySuccess", (req, res) => {
   const { moduleName, status, macAddress } = req.body;
 
@@ -140,15 +99,6 @@ app.post("/api/notifySuccess", (req, res) => {
   }
 
   res.status(200).json({ message: "Module details received and recorded." });
-});
-
-// End the test session, send results, and clear the lastModuleDetails
-app.post("/api/endTestSession", (req, res) => {
-  res.status(200).json({
-    message: "Test session ended, data sent.",
-    data: lastModuleDetails,
-  });
-  lastModuleDetails = []; // Clear the array after sending the data
 });
 
 app.get("/api/getModuleDetails", (req, res) => {
