@@ -90,7 +90,7 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
-app.post("/api/checkIfModuleConnected", (req, res) => {
+app.get("/api/checkIfModuleConnected", (req, res) => {
   res.json("ping");
 });
 
