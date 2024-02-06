@@ -90,8 +90,20 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
-app.get("/api/checkIfModuleConnected", (req, res) => {
-  res.json("ping");
+let pingStatus = false; // false means no ping, true means ping
+
+app.post("/api/sendPing", (req, res) => {
+  pingStatus = true; // Set ping status to true
+  res.json({ message: "Ping initiated." });
+});
+
+app.get("/api/checkPing", (req, res) => {
+  if (pingStatus) {
+    res.json({ message: "ping" }); // Send "ping" to the module
+    pingStatus = false; // Reset ping status after sending
+  } else {
+    res.json({ message: "no ping" }); // No ping available
+  }
 });
 
 let testLedIndecator = false;
