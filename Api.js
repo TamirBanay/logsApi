@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const port = 3000;
-const fetch = require("node-fetch");
 
 const logs = [];
 let connectedModules = {};
@@ -90,36 +89,9 @@ app.post("/api/register", (req, res) => {
 app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
-
-app.post("/api/checkIfModuleConnected", async (req, res) => {
-  try {
-    const response = await fetch(
-      "https://logs-foem.onrender.com/api/moduleIsConnected",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: "ping" }), // Send "ping" to the other service
-      }
-    );
-
-    const data = await response.json(); // Assuming the response is JSON
-
-    if (data.status === "pong") {
-      res.json({ status: "success", message: "Module is connected!" });
-    } else {
-      res.json({
-        status: "failure",
-        message: "Did not receive pong from module.",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "Error checking module connection status",
-      error: error.message,
-    });
-  }
+d
+app.post("/api/checkIfModuleConnected", (req, res) => {
+  res.json("ping");
 });
 
 let testLedIndecator = false;
