@@ -18,6 +18,11 @@ app.get("/api/pingModule", async (req, res) => {
   res.status(200).json("");
 });
 
+app.post("/api/pingModule", (req, res) => {
+  console.log("Ping request received:", req.body);
+  res.status(200).json({ message: "Ping received" });
+});
+
 app.post("/api/logs", (req, res) => {
   try {
     console.log("Log received:", req.body);
