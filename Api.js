@@ -16,23 +16,16 @@ let testLedIndecator = false;
 let macAddress;
 
 app.post("/api/pingModule", (req, res) => {
-  const postedMacAddress = req.body.macAddress;
+  macAddress = req.body;
 
-  if (!postedMacAddress) {
+  if (!macAddress) {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
-  macAddress = postedMacAddress; // Store the posted MAC address
-  res.json({ macAddress: postedMacAddress });
+  res.json({ macAddress });
 });
-
 app.get("/api/pingModule", async (req, res) => {
-  if (!macAddress) {
-    return res
-      .status(404)
-      .json({ error: "No MAC address has been posted yet." });
-  }
-  res.status(200).json({ macAddress });
+  res.status(200).json(macAddress);
 });
 
 app.post("/api/logs", (req, res) => {
