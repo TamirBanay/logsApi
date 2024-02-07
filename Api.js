@@ -13,19 +13,18 @@ const logs = [];
 let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
-
-// app.get("/api/pingModule", async (req, res) => {
-//   res.status(200).json("");
-// });
-
+let macAddress;
 app.post("/api/pingModule", (req, res) => {
-  const { macAddress } = req.body;
+  macAddress = req.body;
 
   if (!macAddress) {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
   res.json({ macAddress });
+});
+app.get("/api/pingModule", async (req, res) => {
+  res.status(200).json(macAddress);
 });
 
 app.post("/api/logs", (req, res) => {
