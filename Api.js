@@ -14,9 +14,9 @@ let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
 
-app.get("/api/pingModule", async (req, res) => {
-  res.status(200).json("");
-});
+// app.get("/api/pingModule", async (req, res) => {
+//   res.status(200).json("");
+// });
 
 app.post("/api/pingModule", (req, res) => {
   const { macAddress } = req.body;
