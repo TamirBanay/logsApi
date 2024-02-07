@@ -13,19 +13,39 @@ const logs = [];
 let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
-let macAddress;
+let macAddress = "";
 
 app.post("/api/pingModule", (req, res) => {
-  macAddress = req.body;
+  const postedMacAddress = req.body.macAddress;
 
-  if (!macAddress) {
+  if (!postedMacAddress) {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
-  res.json({ macAddress });
+  // Reset any existing timeout to clear the MAC address
+  clearTimeout(macAddressTimeout);
+
+  // Set the new MAC address and start a new timeout
+  macAddress = postedMacAddress;
+
+  // Start a timeout to reset the MAC address after 10 seconds
+  const macAddressTimeout = setTimeout(() => {
+    macAddress = "";
+  }, 10000); // 10000 milliseconds = 10 seconds
+
+  res.json({ macAddress: postedMacAddress });
 });
-app.get("/api/pingModule", async (req, res) => {
-  res.status(200).json(macAddress);
+
+app.get("/api/pingModule", (req, res) => {
+  if (!macAddress) {
+    return res
+      .status(404)
+      .json({
+        error:
+          "No MAC address has been posted or the MAC address has been reset.",
+      });
+  }
+  res.status(200).json({ macAddress });
 });
 
 app.post("/api/logs", (req, res) => {
