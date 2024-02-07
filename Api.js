@@ -33,7 +33,7 @@ app.post("/api/pingModule", (req, res) => {
   // Set a timer to clear the macAddress after 10 seconds (10000 milliseconds)
   macAddressTimeout = setTimeout(() => {
     macAddress = "";
-  }, 10000);
+  }, 4000);
 
   res.json({ macAddress: postedMacAddress });
 });
@@ -63,7 +63,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
     lastPongMessage.macAddress = "";
     lastPongMessage.message = "";
     console.log("Pong message and MAC address reset after 10 seconds");
-  }, 10000);
+  }, 4000);
 });
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
