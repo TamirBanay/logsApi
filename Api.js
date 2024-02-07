@@ -46,6 +46,37 @@ app.get("/api/pingModule", (req, res) => {
   }
   res.status(200).json({ macAddress });
 });
+let lastPongMessage = {};
+
+app.post('/pongReceivedFromModule', (req, res) => {
+  // Store the incoming pong message
+  const { macAddress, message } = req.body;
+  if (!macAddress || !message) {
+    return res.status(400).json({ error: "MAC address or message is missing." });
+  }
+
+  // Save the pong message
+  lastPongMessage = { macAddress, message };
+
+  // Respond to the request indicating success
+  res.json({ success: true, message: "Pong received", macAddress, receivedMessage: message });
+});
+
+app.get('/pongReceivedFromModule', (req, res) => {
+  // Check if there's a pong message to return
+  if (Object.keys(lastPongMessage).length === 0) {
+    return res.status(404).json({ error: "No pong message has been received yet." });
+  }
+
+  // Return the last pong message received
+  res.json(lastPongMessage);
+});
+
+
+
+
+
+
 
 app.post("/api/logs", (req, res) => {
   try {
@@ -57,6 +88,8 @@ app.post("/api/logs", (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+
 
 function generateNavMenu(currentRoute) {
   return `
