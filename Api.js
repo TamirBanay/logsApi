@@ -15,6 +15,7 @@ let connectedModules = {};
 let testLedIndecator = false;
 let macAddress = "";
 let macAddressTimeout;
+let lastPongMessage = {};
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
@@ -46,23 +47,24 @@ app.get("/api/pingModule", (req, res) => {
   }
   res.status(200).json({ macAddress });
 });
-let lastPongMessage = {};
 
 app.post("/api/pongReceivedFromModule", (req, res) => {
   lastPongMessage = req.body;
 
   res.json({
-    macAddress: req.body.macAddress, // Confirm the received MAC address
-    message: req.body.req.body.macAddress,
+    macAddress: req.body.macAddress, // Echo back the received MAC address
+    message: req.body.message,
   });
-});
 
+  setTimeout(() => {
+    lastPongMessage = {}; 
+    console.log("Pong message reset after 10 seconds");
+  }, 10000); 
+});
 app.get("/api/pongReceivedFromModule", (req, res) => {
   if (Object.keys(lastPongMessage).length === 0) {
-    // No pong message has been stored yet
     res.status(404).json({ error: "No pong message has been received yet." });
   } else {
-    // Return the last stored pong message
     res.json(lastPongMessage);
   }
 });
