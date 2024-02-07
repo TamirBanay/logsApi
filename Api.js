@@ -49,19 +49,24 @@ app.get("/api/pingModule", (req, res) => {
 let lastPongMessage = {};
 
 app.post("/api/pongReceivedFromModule", (req, res) => {
-  lastPongMessage = req.body; // Assuming the body contains the message you want to store
+  lastPongMessage = req.body;
 
-  res.json({ success: true, message: "Pong message received and stored." });
+  res.json({
+    success: true,
+    macAddress: req.body.macAddress, // Confirm the received MAC address
+    message: "Pong message received and stored.",
+  });
 });
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
   if (Object.keys(lastPongMessage).length === 0) {
+    // No pong message has been stored yet
     res.status(404).json({ error: "No pong message has been received yet." });
   } else {
+    // Return the last stored pong message
     res.json(lastPongMessage);
   }
 });
-
 app.post("/api/logs", (req, res) => {
   try {
     console.log("Log received:", req.body);
