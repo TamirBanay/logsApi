@@ -52,9 +52,8 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
   lastPongMessage = req.body;
 
   res.json({
-    success: true,
     macAddress: req.body.macAddress, // Confirm the received MAC address
-    message: "Pong message received and stored.",
+    message: req.body.req.body.macAddress,
   });
 });
 
