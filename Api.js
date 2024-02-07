@@ -25,7 +25,7 @@ app.post("/api/pingModule", (req, res) => {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
-  res.json({ message: "Ping received", macAddress: macAddress });
+  res.json({ macAddress });
 });
 
 app.post("/api/logs", (req, res) => {
