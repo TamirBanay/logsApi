@@ -67,13 +67,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
 });
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
-  if (Object.keys(lastPongMessage).length === 0) {
-    // No pong message has been stored yet
-    res.status(404).json({ error: "No pong message has been received yet." });
-  } else {
-    // Return the last stored pong message
-    res.json(lastPongMessage);
-  }
+  res.json(lastPongMessage);
 });
 app.post("/api/logs", (req, res) => {
   try {
