@@ -19,8 +19,13 @@ app.get("/api/pingModule", async (req, res) => {
 });
 
 app.post("/api/pingModule", (req, res) => {
-  console.log("Ping request received:", req.body);
-  res.status(200).json({ message: "Ping received" });
+  const { macAddress } = req.body;
+
+  if (!macAddress) {
+    return res.status(400).json({ error: "MAC address is missing." });
+  }
+
+  res.json({ message: "Ping received", macAddress: macAddress });
 });
 
 app.post("/api/logs", (req, res) => {
