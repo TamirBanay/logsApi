@@ -48,25 +48,18 @@ app.get("/api/pingModule", (req, res) => {
 });
 let lastPongMessage = {};
 
-// Assuming `app` is an instance of express()
 app.post("/api/pongReceivedFromModule", (req, res) => {
-  console.log("Pong received:", req.body);
-  // Process the pong message here
+  lastPongMessage = req.body; // Assuming the body contains the message you want to store
 
-  // Respond to confirm receipt
-  res.json({ success: true, message: "Pong received" });
+  res.json({ success: true, message: "Pong message received and stored." });
 });
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
-  // Check if there's a pong message to return
   if (Object.keys(lastPongMessage).length === 0) {
-    return res
-      .status(404)
-      .json({ error: "No pong message has been received yet." });
+    res.status(404).json({ error: "No pong message has been received yet." });
+  } else {
+    res.json(lastPongMessage);
   }
-
-  // Return the last pong message received
-  res.json(lastPongMessage);
 });
 
 app.post("/api/logs", (req, res) => {
