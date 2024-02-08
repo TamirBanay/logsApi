@@ -13,8 +13,10 @@ const logs = [];
 let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
-let macAddress = "";
-let macAddressTimeout;
+let macAddress = null;
+let macAddressTimestamp = null;
+const VALIDITY_DURATION = 10000; // 10 seconds
+let lastPongMessage = {};
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
@@ -23,31 +25,21 @@ app.post("/api/pingModule", (req, res) => {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
-  // Clear the previous timer, if it exists
-  if (macAddressTimeout) {
-    clearTimeout(macAddressTimeout);
-  }
-
   macAddress = postedMacAddress;
-
-  // Set a timer to clear the macAddress after 10 seconds (10000 milliseconds)
-  macAddressTimeout = setTimeout(() => {
-    macAddress = "";
-  }, 10000);
+  macAddressTimestamp = Date.now(); // Update timestamp
 
   res.json({ macAddress: postedMacAddress });
 });
 
 app.get("/api/pingModule", (req, res) => {
-  if (!macAddress) {
+  if (!macAddress || Date.now() - macAddressTimestamp > VALIDITY_DURATION) {
+    macAddress = null; // Reset if expired
     return res
       .status(404)
-      .json({ error: "No MAC address has been posted or it has been reset." });
+      .json({ error: "No MAC address has been posted or it has expired." });
   }
   res.status(200).json({ macAddress });
 });
-let lastPongMessage = {};
-
 app.post("/api/pongReceivedFromModule", (req, res) => {
   lastPongMessage = {
     macAddress: req.body.macAddress,
