@@ -17,6 +17,19 @@ let macAddress = "";
 let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
+let password = "123456";
+let userName = "banay9239@gmail.com";
+
+app.post("/api/login", (req, res) => {
+  const { email, password: clientPassword } = req.body;
+
+  if (email === userName && clientPassword === password) {
+    res.json({ success: true, message: "Authentication successful" });
+  } else {
+    res.status(401).json({ success: false, message: "Authentication failed" });
+  }
+});
+
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
   const postedtestType = req.body.testType;
