@@ -13,9 +13,8 @@ const logs = [];
 let lastModuleDetails = [];
 let connectedModules = {};
 let testLedIndecator = false;
-let macAddress = null;
-let macAddressTimestamp = null;
-const VALIDITY_DURATION = 10000; // 10 seconds
+let macAddress = "";
+let macAddressTimeout;
 let lastPongMessage = {};
 
 app.post("/api/pingModule", (req, res) => {
@@ -25,21 +24,33 @@ app.post("/api/pingModule", (req, res) => {
     return res.status(400).json({ error: "MAC address is missing." });
   }
 
+  if (macAddressTimeout) {
+    clearTimeout(macAddressTimeout);
+  }
+
   macAddress = postedMacAddress;
-  macAddressTimestamp = Date.now(); // Update timestamp
+
+  macAddressTimeout = setTimeout(() => {
+    macAddress = "";
+  }, 10000);
 
   res.json({ macAddress: postedMacAddress });
 });
+app.post("/api/ledtest", (req, res) => {
+  const { macAddress } = req.body;
+  console.log(`LED test triggered for MAC address: ${macAddress}`);
+  res.json({ message: `LED test started for ${macAddress}` });
+});
 
 app.get("/api/pingModule", (req, res) => {
-  if (!macAddress || Date.now() - macAddressTimestamp > VALIDITY_DURATION) {
-    macAddress = null; // Reset if expired
+  if (!macAddress) {
     return res
       .status(404)
-      .json({ error: "No MAC address has been posted or it has expired." });
+      .json({ error: "No MAC address has been posted or it has been reset." });
   }
   res.status(200).json({ macAddress });
 });
+
 app.post("/api/pongReceivedFromModule", (req, res) => {
   lastPongMessage = {
     macAddress: req.body.macAddress,
@@ -47,7 +58,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
   };
 
   res.json({
-    macAddress: req.body.macAddress, // Echo back the received MAC address
+    macAddress: req.body.macAddress,
     message: req.body.message,
   });
 
@@ -118,11 +129,11 @@ app.get("/api/modules", (req, res) => {
   res.status(200).json(connectedModules);
 });
 
-app.get("/testLed", (req, res) => {
+app.get("api/testLed", (req, res) => {
   res.json(testLedIndecator);
 });
 
-app.post("/changeLedValue", (req, res) => {
+app.post("api/changeLedValue", (req, res) => {
   testLedIndecator = true;
   res.send("Value changed to true");
 
