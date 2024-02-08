@@ -19,7 +19,7 @@ let lastPongMessage = {};
 let testType = "";
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
-  const testType = req.body.testType;
+  const postedtestType = req.body.testType;
 
   if (!postedMacAddress) {
     return res.status(400).json({ error: "MAC address is missing." });
@@ -30,14 +30,14 @@ app.post("/api/pingModule", (req, res) => {
   }
 
   macAddress = postedMacAddress;
-  testType = testType;
+  testType = postedtestType;
 
   macAddressTimeout = setTimeout(() => {
     macAddress = "";
     testType = "";
   }, 10000);
 
-  res.json({ macAddress: postedMacAddress });
+  res.json({ macAddress: postedMacAddress, testType: postedtestType });
 });
 
 app.get("/api/pingModule", (req, res) => {
