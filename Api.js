@@ -41,6 +41,14 @@ app.post("/api/ledtest", (req, res) => {
   console.log(`LED test triggered for MAC address: ${macAddress}`);
   res.json({ message: `LED test started for ${macAddress}` });
 });
+app.get("/api/ledtest", (req, res) => {
+  if (!macAddress) {
+    return res
+      .status(404)
+      .json({ error: "No MAC address has been posted or it has been reset." });
+  }
+  res.status(200).json({ macAddress });
+});
 
 app.get("/api/pingModule", (req, res) => {
   if (!macAddress) {
