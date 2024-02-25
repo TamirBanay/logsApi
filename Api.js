@@ -87,7 +87,7 @@ app.post("/api/logs", (req, res) => {
   try {
     console.log("Log received:", req.body);
     logs.push(req.body);
-    res.status(200).send(logs, new Date());
+    res.status(200).send(logs);
   } catch (error) {
     console.error("Error handling /api/logs:", error);
     res.status(500).send("Server error");
