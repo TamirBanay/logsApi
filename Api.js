@@ -9,8 +9,7 @@ app.use(express.json());
 const cors = require("cors");
 
 const corsOptions = {
-  origin: ["https://tamirbanay.github.io", "http://localhost:3001"], // Add other domains as needed
-  optionsSuccessStatus: 200, // For legacy browser support
+  origin: "https://tamirbanay.github.io",
 };
 
 app.use(cors(corsOptions));
