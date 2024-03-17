@@ -7,11 +7,18 @@ const app = express();
 const port = 3000;
 app.use(express.json());
 const cors = require("cors");
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+
+const corsOptions = {
+  origin: ["https://tamirbanay.github.io", "http://localhost:3001"], // Add other domains as needed
+  optionsSuccessStatus: 200, // For legacy browser support
+};
+
+app.use(cors(corsOptions));
+// app.use(
+//   cors({
+//     origin: "*",
+//   })
+// );
 
 const logs = [];
 let lastModuleDetails = [];
@@ -34,7 +41,6 @@ app.get("/api/getModuels", (req, res) => {
     .then((modules) => res.json(modules))
     .catch((err) => res.json(err));
 });
-
 
 app.post("/api/getModuels", async (req, res) => {
   try {
@@ -60,18 +66,12 @@ app.post("/api/getModuels", async (req, res) => {
   }
 });
 
-
 app.get("/api/getLogs", (req, res) => {
   logsModel
     .find()
     .then((logs) => res.json(logs))
     .catch((err) => res.json(err));
 });
-
-
-
-
-
 
 app.post("/api/getLogs", async (req, res) => {
   try {
@@ -105,8 +105,6 @@ app.post("/api/getLogs", async (req, res) => {
 
 // Define a model
 // const logsModel = mongoose.model("Logs", Logschema);
-
-
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
