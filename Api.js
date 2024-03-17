@@ -1,4 +1,8 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const moduleModel = require("./mongoDB/Modules");
+const logsModel = require("./mongoDB/Logs");
+
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -17,18 +21,92 @@ let macAddress = "";
 let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
-let password = "123456";
-let userName = "banay9239@gmail.com";
 
-app.post("/api/login", (req, res) => {
-  const { email, password: clientPassword } = req.body;
+const mongoDB =
+  "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-  if (email === userName && clientPassword === password) {
-    res.json({ success: true, message: "Authentication successful" });
-  } else {
-    res.status(401).json({ success: false, message: "Authentication failed" });
+// Connect to MongoDB
+mongoose.connect(mongoDB).then(() => console.log("MongoDB connected..."));
+
+app.get("/api/getModuels", (req, res) => {
+  moduleModel
+    .find()
+    .then((modules) => res.json(modules))
+    .catch((err) => res.json(err));
+});
+
+
+app.post("/api/getModuels", async (req, res) => {
+  try {
+    let module = await moduleModel.findOne({ macAddress: req.body.macAddress });
+
+    if (!module) {
+      module = new moduleModel({
+        macAddress: req.body.macAddress,
+        timestamp: req.body.timestamp,
+        moduleName: req.body.moduleName,
+        log: req.body.log,
+        ipAddress: req.body.ipAddress,
+        log: "module is connected", // This can be a default message or based on some logic
+      });
+      await module.save();
+    }
+
+    // The module either already existed or is newly created, now send back the response
+    res.send({ success: true, module: module });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    res.status(500).send({ success: false, message: "Failed to save data" });
   }
 });
+
+
+app.get("/api/getLogs", (req, res) => {
+  logsModel
+    .find()
+    .then((logs) => res.json(logs))
+    .catch((err) => res.json(err));
+});
+
+
+
+
+
+
+app.post("/api/getLogs", async (req, res) => {
+  try {
+    // Create a new document for the Data collection
+    const LogsData = new logsModel({
+      macAddress: req.body.macAddress,
+      timestamp: req.body.timestamp,
+      moduleName: req.body.moduleName,
+      log: req.body.log,
+    });
+
+    const logs = await LogsData.save();
+
+    res.send({ success: true, logs: logs });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    res.status(500).send({ success: false, message: "Failed to save data" });
+  }
+});
+
+// const ModuleSchema = new mongoose.Schema({
+//   macAddress: String,
+//   lastSeen: String,
+// });
+// const moduleModel = mongoose.model("Module", ModuleSchema);
+// const Logschema = new mongoose.Schema({
+//   macAddress: String,
+//   timestamp: String,
+//   log: String,
+// });
+
+// Define a model
+// const logsModel = mongoose.model("Logs", Logschema);
+
+
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
