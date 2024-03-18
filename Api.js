@@ -36,24 +36,24 @@ app.get("/api/getModuels", (req, res) => {
 });
 
 app.post("/api/getModuels", async (req, res) => {
-  try {
-    const update = {
-      macAddress: req.body.macAddress,
-      timestamp: req.body.timestamp,
-      moduleName: req.body.moduleName,
-      log: req.body.log || "module is connected",
-      ipAddress: req.body.ipAddress,
-    };
+  const update = {
+    macAddress: req.body.macAddress,
+    timestamp: req.body.timestamp,
+    moduleName: req.body.moduleName,
+    log: req.body.log || "module is connected",
+    ipAddress: req.body.ipAddress,
+  };
 
+  console.log("Attempting to update:", update);
+
+  try {
     const module = await moduleModel.findOneAndUpdate(
-      {
-        moduleName: req.body.moduleName,
-       
-      },
+      { macAddress: req.body.macAddress },
       update,
       { new: true, upsert: true }
     );
 
+    console.log("Updated or inserted document:", module);
     res.send({ success: true, module: module });
   } catch (err) {
     console.error("Error updating or saving data:", err);
