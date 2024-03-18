@@ -15,23 +15,14 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
 
-const logs = [];
-let lastModuleDetails = [];
-let connectedModules = {};
-let testLedIndecator = false;
+
+
 let macAddress = "";
 let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 
-// const mongoDB =
-//   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const connectionString =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
 
@@ -58,12 +49,11 @@ app.post("/api/getModuels", async (req, res) => {
         moduleName: req.body.moduleName,
         log: req.body.log,
         ipAddress: req.body.ipAddress,
-        log: "module is connected", // This can be a default message or based on some logic
+        log: "module is connected", 
       });
       await module.save();
     }
 
-    // The module either already existed or is newly created, now send back the response
     res.send({ success: true, module: module });
   } catch (err) {
     console.error("Error saving data:", err);
@@ -80,7 +70,6 @@ app.get("/api/getLogs", (req, res) => {
 
 app.post("/api/getLogs", async (req, res) => {
   try {
-    // Create a new document for the Data collection
     const LogsData = new logsModel({
       macAddress: req.body.macAddress,
       timestamp: req.body.timestamp,
@@ -97,19 +86,7 @@ app.post("/api/getLogs", async (req, res) => {
   }
 });
 
-// const ModuleSchema = new mongoose.Schema({
-//   macAddress: String,
-//   lastSeen: String,
-// });
-// const moduleModel = mongoose.model("Module", ModuleSchema);
-// const Logschema = new mongoose.Schema({
-//   macAddress: String,
-//   timestamp: String,
-//   log: String,
-// });
 
-// Define a model
-// const logsModel = mongoose.model("Logs", Logschema);
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
@@ -164,31 +141,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
 app.get("/api/pongReceivedFromModule", (req, res) => {
   res.json(lastPongMessage);
 });
-app.post("/api/logs", (req, res) => {
-  try {
-    // console.log("Log received:", req.body);
-    logs.push(req.body);
-    res.status(200).send(logs);
-  } catch (error) {
-    console.error("Error handling /api/logs:", error);
-    res.status(500).send("Server error");
-  }
-});
 
-app.post("/api/register", (req, res) => {
-  const { moduleName, macAddress, ipAddress } = req.body;
-  connectedModules[macAddress] = {
-    moduleName,
-    lastSeen: new Date(),
-    macAddress: macAddress,
-    ipAddress: ipAddress,
-  };
-  res.status(200).send("Module registered");
-});
-
-app.get("/api/modules", (req, res) => {
-  res.status(200).json(connectedModules);
-});
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening on port ${port}`);
