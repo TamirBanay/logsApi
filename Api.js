@@ -41,17 +41,14 @@ app.post("/api/getModuels", async (req, res) => {
       macAddress: req.body.macAddress,
       timestamp: req.body.timestamp,
       moduleName: req.body.moduleName,
-      log: req.body.log || "module is connected", 
+      log: req.body.log || "module is connected",
       ipAddress: req.body.ipAddress,
     };
 
     const module = await moduleModel.findOneAndUpdate(
       {
-        macAddress: req.body.macAddress,
-        timestamp: req.body.timestamp,
         moduleName: req.body.moduleName,
-        log: req.body.log || "module is connected", 
-        ipAddress: req.body.ipAddress,
+       
       },
       update,
       { new: true, upsert: true }
