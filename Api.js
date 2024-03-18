@@ -30,9 +30,13 @@ let testType = "";
 
 const mongoDB =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const connectionString =
+  "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
 
 // Connect to MongoDB
-mongoose.connect(mongoDB).then(() => console.log("MongoDB connected..."));
+mongoose
+  .connect(connectionString)
+  .then(() => console.log("MongoDB connected..."));
 
 app.get("/api/getModuels", (req, res) => {
   moduleModel
