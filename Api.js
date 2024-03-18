@@ -9,7 +9,7 @@ app.use(express.json());
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "https://tamirbanay.github.io",
+  origin: "https://tamirbanay.github.io/myAdminApp",
 };
 
 app.use(cors(corsOptions));
