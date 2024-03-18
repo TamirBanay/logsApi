@@ -157,7 +157,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
   setTimeout(() => {
     lastPongMessage.macAddress = "";
     lastPongMessage.message = "";
-    console.log("Pong message and MAC address reset after 10 seconds");
+    // console.log("Pong message and MAC address reset after 10 seconds");
   }, 10000);
 });
 
@@ -166,7 +166,7 @@ app.get("/api/pongReceivedFromModule", (req, res) => {
 });
 app.post("/api/logs", (req, res) => {
   try {
-    console.log("Log received:", req.body);
+    // console.log("Log received:", req.body);
     logs.push(req.body);
     res.status(200).send(logs);
   } catch (error) {
