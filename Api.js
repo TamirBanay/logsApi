@@ -37,20 +37,24 @@ app.get("/api/getModuels", (req, res) => {
 
 app.post("/api/getModuels", async (req, res) => {
   try {
-    // Define the update or new module details
     const update = {
       macAddress: req.body.macAddress,
       timestamp: req.body.timestamp,
       moduleName: req.body.moduleName,
-      log: req.body.log || "module is connected", // Default log message if none provided
+      log: req.body.log || "module is connected", 
       ipAddress: req.body.ipAddress,
     };
 
-    // Find a module by macAddress and update it, or insert it if it doesn't exist
     const module = await moduleModel.findOneAndUpdate(
-      { macAddress: req.body.macAddress }, 
-      update, 
-      { new: true, upsert: true } 
+      {
+        macAddress: req.body.macAddress,
+        timestamp: req.body.timestamp,
+        moduleName: req.body.moduleName,
+        log: req.body.log || "module is connected", 
+        ipAddress: req.body.ipAddress,
+      },
+      update,
+      { new: true, upsert: true }
     );
 
     res.send({ success: true, module: module });
