@@ -9,10 +9,12 @@ app.use(express.json());
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "https://tamirbanay.github.io/myAdminApp",
+  origin: "https://tamirbanay.github.io",
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
+
 // app.use(
 //   cors({
 //     origin: "*",
