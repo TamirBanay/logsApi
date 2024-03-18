@@ -15,9 +15,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-
-
-
 let macAddress = "";
 let macAddressTimeout;
 let lastPongMessage = {};
@@ -40,24 +37,28 @@ app.get("/api/getModuels", (req, res) => {
 
 app.post("/api/getModuels", async (req, res) => {
   try {
-    let module = await moduleModel.findOne({ macAddress: req.body.macAddress });
+    // Define the update or new module details
+    const update = {
+      macAddress: req.body.macAddress,
+      timestamp: req.body.timestamp,
+      moduleName: req.body.moduleName,
+      log: req.body.log || "module is connected", // Default log message if none provided
+      ipAddress: req.body.ipAddress,
+    };
 
-    if (!module) {
-      module = new moduleModel({
-        macAddress: req.body.macAddress,
-        timestamp: req.body.timestamp,
-        moduleName: req.body.moduleName,
-        log: req.body.log,
-        ipAddress: req.body.ipAddress,
-        log: "module is connected", 
-      });
-      await module.save();
-    }
+    // Find a module by macAddress and update it, or insert it if it doesn't exist
+    const module = await moduleModel.findOneAndUpdate(
+      { macAddress: req.body.macAddress }, 
+      update, 
+      { new: true, upsert: true } 
+    );
 
     res.send({ success: true, module: module });
   } catch (err) {
-    console.error("Error saving data:", err);
-    res.status(500).send({ success: false, message: "Failed to save data" });
+    console.error("Error updating or saving data:", err);
+    res
+      .status(500)
+      .send({ success: false, message: "Failed to update or save data" });
   }
 });
 
@@ -85,8 +86,6 @@ app.post("/api/getLogs", async (req, res) => {
     res.status(500).send({ success: false, message: "Failed to save data" });
   }
 });
-
-
 
 app.post("/api/pingModule", (req, res) => {
   const postedMacAddress = req.body.macAddress;
@@ -141,7 +140,6 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
 app.get("/api/pongReceivedFromModule", (req, res) => {
   res.json(lastPongMessage);
 });
-
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening on port ${port}`);
