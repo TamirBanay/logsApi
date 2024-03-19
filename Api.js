@@ -162,7 +162,7 @@ app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
     if (macAddressTimeouts[macAddress]) {
       macAddressTimeouts[macAddress].isConnected = false;
     }
-  }, 10000);
+  }, 60000);
 
   macAddressTimeouts[macAddress] = {
     timeoutId,
