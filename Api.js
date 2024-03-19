@@ -7,9 +7,14 @@ const app = express();
 const port = 3000;
 app.use(express.json());
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const corsOptions = {
-  origin: "https://tamirbanay.github.io",
+  origin: [
+    "https://tamirbanay.github.io",
+    "http://localhost:3001",
+    "http://localhost",
+  ],
   optionsSuccessStatus: 200,
 };
 
@@ -19,6 +24,7 @@ let macAddress = "";
 let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
+const macAddressTimeouts = {};
 
 const connectionString =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
@@ -140,6 +146,41 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
   res.json(lastPongMessage);
+});
+
+
+app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
+  const macAddress = req.params.macAddress;
+
+  if (macAddressTimeouts[macAddress]) {
+    clearTimeout(macAddressTimeouts[macAddress].timeoutId);
+    macAddressTimeouts[macAddress].isConnected = true; // Mark as connected
+  }
+
+  const timeoutId = setTimeout(() => {
+    console.log(`${macAddress} is disconnected`);
+    if (macAddressTimeouts[macAddress]) {
+      macAddressTimeouts[macAddress].isConnected = false;
+    }
+  }, 10000);
+
+  macAddressTimeouts[macAddress] = {
+    timeoutId,
+    isConnected: true,
+  };
+
+  res.json({ message: "connected", macAddress, isConnected: true });
+});
+
+app.get("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
+  const macAddress = req.params.macAddress;
+  const moduleInfo = macAddressTimeouts[macAddress];
+
+  if (moduleInfo) {
+    res.json({ macAddress, isConnected: moduleInfo.isConnected });
+  } else {
+    res.status(404).json({ error: "MAC address not found" });
+  }
 });
 
 app.listen(port, "0.0.0.0", () => {
