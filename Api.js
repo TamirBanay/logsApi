@@ -148,7 +148,6 @@ app.get("/api/pongReceivedFromModule", (req, res) => {
   res.json(lastPongMessage);
 });
 
-
 app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   const macAddress = req.params.macAddress;
 
@@ -179,7 +178,7 @@ app.get("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   if (moduleInfo) {
     res.json({ macAddress, isConnected: moduleInfo.isConnected });
   } else {
-    res.status(404).json({ error: "MAC address not found" });
+    res.json({ macAddress, isConnected: false });
   }
 });
 
