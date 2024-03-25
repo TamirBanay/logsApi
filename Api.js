@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
 const citiesFilePath = "./cities.json";
+const fs = require("fs");
+
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
