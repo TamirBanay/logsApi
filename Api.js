@@ -4,7 +4,7 @@ const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.use(express.json());
 const cors = require("cors");
 const bodyParser = require("body-parser");
