@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
-
+const citiesFilePath = "./cities.json";
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
@@ -180,6 +180,24 @@ app.get("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   } else {
     res.json({ macAddress, isConnected: false });
   }
+});
+
+function loadCities() {
+  try {
+    const data = fs.readFileSync(citiesFilePath, "utf8");
+    const cities = JSON.parse(data);
+
+    cityList = Object.keys(cities).map((key) => cities[key].label);
+  } catch (error) {
+    console.error("Error reading cities file:", error);
+    cityList = [];
+  }
+}
+loadCities();
+
+app.get("/citiesjson", (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.json(cityList);
 });
 
 app.listen(port, "0.0.0.0", () => {
