@@ -38,7 +38,14 @@ mongoose
   .then(() => console.log("MongoDB connected..."));
 
 app.get("/api/update", (req, res) => {
+  // Set the directory where the .bin files are stored
   const filePath = path.join(__dirname, "uploads", "AlermSystem.bin");
+
+  // Set headers to instruct the browser to download the file
+  res.setHeader("Content-Disposition", "attachment; filename=AlermSystem.bin");
+  res.setHeader("Content-Type", "application/octet-stream");
+
+  // Send the file for download
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error("Failed to send file:", err);
