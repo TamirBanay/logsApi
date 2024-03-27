@@ -4,6 +4,7 @@ const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
 const citiesFilePath = "./cities.json";
 const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,6 +36,18 @@ const connectionString =
 mongoose
   .connect(connectionString)
   .then(() => console.log("MongoDB connected..."));
+
+app.get("/download/alermSystemFile", (req, res) => {
+  const filePath = path.join(__dirname, "uploads", "AlermSystem.ino");
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Failed to send file:", err);
+      if (!res.headersSent) {
+        res.status(500).send("Error sending file.");
+      }
+    }
+  });
+});
 
 app.get("/api/getModuels", (req, res) => {
   moduleModel
