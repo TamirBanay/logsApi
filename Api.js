@@ -38,7 +38,7 @@ mongoose
   .then(() => console.log("MongoDB connected..."));
 
 app.get("/api/update", (req, res) => {
-  const filePath = path.join(__dirname, "uploads", "AlermSystem.ino");
+  const filePath = path.join(__dirname, "uploads", "AlermSystem.bin");
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error("Failed to send file:", err);
