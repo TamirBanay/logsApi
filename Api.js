@@ -37,7 +37,7 @@ mongoose
   .connect(connectionString)
   .then(() => console.log("MongoDB connected..."));
 
-app.get("/download/alermSystemFile", (req, res) => {
+app.get("/api/update", (req, res) => {
   const filePath = path.join(__dirname, "uploads", "AlermSystem.ino");
   res.sendFile(filePath, (err) => {
     if (err) {
