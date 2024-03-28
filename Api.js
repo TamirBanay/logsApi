@@ -39,7 +39,7 @@ mongoose
 
 app.get("/api/update", (req, res) => {
   // Set the directory where the .bin files are stored
-  const filePath = path.join(__dirname, "uploads", "AlermSystem.bin");
+  const filePath = path.join(__dirname, "uploads", "AlermSystem.ino.esp32da.bin");
 
   // Set headers to instruct the browser to download the file
   res.setHeader("Content-Disposition", "attachment; filename=AlermSystem.bin");
