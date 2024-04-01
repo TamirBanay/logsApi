@@ -70,6 +70,9 @@ app.post("/api/getModuels", async (req, res) => {
     moduleName: req.body.moduleName,
     log: req.body.log || "module is connected",
     ipAddress: req.body.ipAddress,
+    version: req.body.version,
+    
+
   };
 
   console.log("Attempting to update:", update);
