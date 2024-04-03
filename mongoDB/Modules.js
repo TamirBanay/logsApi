@@ -6,7 +6,6 @@ const ModuleSchema = new mongoose.Schema({
   log: String,
   ipAddress: String,
   version: String,
-  isUpdated: Boolean,
 });
 const moduleModel = mongoose.model("Module", ModuleSchema);
 

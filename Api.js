@@ -28,7 +28,7 @@ let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 const macAddressTimeouts = {};
-
+const lastVersion = "0.0.7";
 const connectionString =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
 
@@ -58,6 +58,9 @@ app.get("/api/update", (req, res) => {
       }
     }
   });
+});
+app.get("/api/getLastVersion", (req, res) => {
+  res.json({ lastVersion: lastVersion });
 });
 
 app.get("/api/getModuels", (req, res) => {
