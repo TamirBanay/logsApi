@@ -165,11 +165,15 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
   res.json({
     macAddress: req.body.macAddress,
     message: req.body.message,
+    testType: req.body.testType,
+
   });
 
   setTimeout(() => {
     lastPongMessage.macAddress = "";
     lastPongMessage.message = "";
+    lastPongMessage.testType = "";
+
     // console.log("Pong message and MAC address reset after 10 seconds");
   }, 10000);
 });
