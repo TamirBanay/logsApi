@@ -77,7 +77,6 @@ app.post("/api/getModuels", async (req, res) => {
     log: req.body.log || "module is connected",
     ipAddress: req.body.ipAddress,
     version: req.body.version,
-    isUpdated: req.body.isUpdated,
   };
 
   console.log("Attempting to update:", update);
@@ -160,6 +159,7 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
   lastPongMessage = {
     macAddress: req.body.macAddress,
     message: req.body.message,
+    testType: req.body.testType,
   };
 
   res.json({
@@ -167,11 +167,11 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
     message: req.body.message,
   });
 
-  setTimeout(() => {
-    lastPongMessage.macAddress = "";
-    lastPongMessage.message = "";
-    // console.log("Pong message and MAC address reset after 10 seconds");
-  }, 10000);
+  // setTimeout(() => {
+  //   lastPongMessage.macAddress = "";
+  //   lastPongMessage.message = "";
+  //   // console.log("Pong message and MAC address reset after 10 seconds");
+  // }, 10000);
 });
 
 app.get("/api/pongReceivedFromModule", (req, res) => {
@@ -186,7 +186,6 @@ function checkModuleConnection(macAddress) {
 }
 
 function scheduleCheck(macAddress, isConnected) {
-  // Clear existing timeout if any
   if (
     macAddressTimeouts[macAddress] &&
     macAddressTimeouts[macAddress].checkTimeoutId
