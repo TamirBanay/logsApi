@@ -23,6 +23,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 let macAddress = "";
+let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 const macAddressTimeouts = {};
