@@ -166,7 +166,6 @@ app.post("/api/pongReceivedFromModule", (req, res) => {
     macAddress: req.body.macAddress,
     message: req.body.message,
     testType: req.body.testType,
-
   });
 
   setTimeout(() => {
@@ -182,44 +181,25 @@ app.get("/api/pongReceivedFromModule", (req, res) => {
   res.json(lastPongMessage);
 });
 
-function checkModuleConnection(macAddress) {
-  // Simulated connection check logic
-  console.log(`Simulated connection check for ${macAddress}`);
-  // Randomly return true or false for demonstration purposes
-  return Math.random() < 0.5;
-}
-
-function scheduleCheck(macAddress, isConnected) {
-  if (
-    macAddressTimeouts[macAddress] &&
-    macAddressTimeouts[macAddress].checkTimeoutId
-  ) {
-    clearTimeout(macAddressTimeouts[macAddress].checkTimeoutId);
-  }
-
-  const nextCheckInterval = isConnected ? 10 * 60 * 1000 : 1 * 60 * 1000; // 10 mins for connected, 1 min for not connected
-
-  const checkTimeoutId = setTimeout(() => {
-    console.log(`Checking connection status for ${macAddress}`);
-    const isConnected = checkModuleConnection(macAddress);
-
-    if (macAddressTimeouts[macAddress]) {
-      macAddressTimeouts[macAddress].isConnected = isConnected;
-    }
-
-    scheduleCheck(macAddress, isConnected);
-  }, nextCheckInterval);
-
-  macAddressTimeouts[macAddress] = {
-    ...macAddressTimeouts[macAddress],
-    checkTimeoutId,
-    isConnected,
-  };
-}
-
 app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   const macAddress = req.params.macAddress;
-  scheduleCheck(macAddress, true);
+
+  if (macAddressTimeouts[macAddress]) {
+    clearTimeout(macAddressTimeouts[macAddress].timeoutId);
+    macAddressTimeouts[macAddress].isConnected = true; // Mark as connected
+  }
+
+  const timeoutId = setTimeout(() => {
+    console.log(`${macAddress} is disconnected`);
+    if (macAddressTimeouts[macAddress]) {
+      macAddressTimeouts[macAddress].isConnected = false;
+    }
+  }, 60000);
+
+  macAddressTimeouts[macAddress] = {
+    timeoutId,
+    isConnected: true,
+  };
 
   res.json({ message: "connected", macAddress, isConnected: true });
 });
@@ -227,7 +207,6 @@ app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
 app.get("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   const macAddress = req.params.macAddress;
   const moduleInfo = macAddressTimeouts[macAddress];
-
   if (moduleInfo) {
     res.json({ macAddress, isConnected: moduleInfo.isConnected });
   } else {
