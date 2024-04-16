@@ -23,7 +23,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 let macAddress = "";
-let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 const macAddressTimeouts = {};
@@ -184,18 +183,26 @@ app.get("/api/pongReceivedFromModule", (req, res) => {
 app.post("/api/moduleIsConnectIndicator/:macAddress", (req, res) => {
   const macAddress = req.params.macAddress;
 
+  // Clear any existing timeout
   if (macAddressTimeouts[macAddress]) {
     clearTimeout(macAddressTimeouts[macAddress].timeoutId);
-    macAddressTimeouts[macAddress].isConnected = true; // Mark as connected
   }
 
+  // Define the timeout period based on current connection status
+  const timeoutDuration =
+    macAddressTimeouts[macAddress] && macAddressTimeouts[macAddress].isConnected
+      ? 600000
+      : 120000;
+
+  // Set a new timeout to update the isConnected status
   const timeoutId = setTimeout(() => {
     console.log(`${macAddress} is disconnected`);
     if (macAddressTimeouts[macAddress]) {
       macAddressTimeouts[macAddress].isConnected = false;
     }
-  }, 60000);
+  }, timeoutDuration);
 
+  // Update the macAddressTimeouts object
   macAddressTimeouts[macAddress] = {
     timeoutId,
     isConnected: true,
