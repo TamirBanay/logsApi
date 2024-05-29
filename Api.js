@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
 const citiesFilePath = "./cities.json";
+const favicon = "./images/favicon";
 const fs = require("fs");
 const path = require("path");
 
@@ -238,6 +239,12 @@ loadCities();
 app.get("/citiesjson", (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.json(cityList);
+});
+
+app.get("/api/favicon", (req, res) => {
+  // Replace 'path/to/image.jpg' with the path to your image file
+  const imagePath = path.join(__dirname, "./images/favicon.ico");
+  res.sendFile(imagePath);
 });
 
 app.listen(port, "0.0.0.0", () => {
