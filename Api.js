@@ -67,7 +67,7 @@ app.get("/api/getModuels", (req, res) => {
 });
 
 app.post("/api/getModuels", async (req, res) => {
-  console.log("Request Body:", req.body); // Log the request body for debugging
+  console.log("Request Body:", JSON.stringify(req.body, null, 2)); // Log the request body for debugging
 
   const update = {
     macAddress: req.body.macAddress,
