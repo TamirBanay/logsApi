@@ -67,6 +67,8 @@ app.get("/api/getModuels", (req, res) => {
 });
 
 app.post("/api/getModuels", async (req, res) => {
+  console.log("Request Body:", req.body); // Log the request body for debugging
+
   const update = {
     macAddress: req.body.macAddress,
     timestamp: req.body.timestamp,
@@ -74,25 +76,23 @@ app.post("/api/getModuels", async (req, res) => {
     log: req.body.log || "module is connected",
     ipAddress: req.body.ipAddress,
     version: req.body.version,
-    targetCities: req.body.targetCities || [],
+    targetCities: req.body.targetCities || [], // Include targetCities
   };
 
-  console.log("Attempting to update:", update);
-
   try {
-    const module = await moduleModel.findOneAndUpdate(
-      { macAddress: req.body.macAddress },
-      update,
-      { new: true, upsert: true }
-    );
+    const filter = { macAddress: req.body.macAddress };
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-    console.log("Updated or inserted document:", module);
-    res.send({ success: true, module: module });
-  } catch (err) {
-    console.error("Error updating or saving data:", err);
-    res
-      .status(500)
-      .send({ success: false, message: "Failed to update or save data" });
+    let module = await moduleModel.findOneAndUpdate(filter, update, options);
+    if (!module) {
+      module = new moduleModel(update); // Fix typo here
+      await module.save();
+    }
+
+    res.status(200).json({ success: true, module });
+  } catch (error) {
+    console.error("Error updating module:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
