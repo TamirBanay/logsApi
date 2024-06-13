@@ -13,11 +13,7 @@ app.use(express.json());
 const cors = require("cors");
 
 const corsOptions = {
-  origin: [
-    "https://tamirbanay.github.io",
-    "http://localhost:3001",
-    "http://localhost",
-  ],
+  origin: "*",
   optionsSuccessStatus: 200,
 };
 
