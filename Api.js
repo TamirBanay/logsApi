@@ -24,7 +24,7 @@ let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 const macAddressTimeouts = {};
-const lastVersion = "0.1.5";
+const lastVersion = "0.1.6";
 const connectionString =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
 
