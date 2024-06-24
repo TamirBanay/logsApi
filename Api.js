@@ -6,6 +6,7 @@ const citiesFilePath = "./cities.json";
 const favicon = "./images/favicon";
 const fs = require("fs");
 const path = require("path");
+const axios = require("axios");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +19,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+let savedDataCities = {};
+let savedData = {};
 
 let macAddress = "";
 let macAddressTimeout;
@@ -239,9 +242,81 @@ app.get("/citiesjson", (req, res) => {
 });
 
 app.get("/api/favicon", (req, res) => {
-  // Replace 'path/to/image.jpg' with the path to your image file
   const imagePath = path.join(__dirname, "./images/favicon.ico");
   res.sendFile(imagePath);
+});
+
+app.post("/internal/updateCities", (req, res) => {
+  const { macAddress, cities } = req.body;
+
+  console.log(`Internal Update for MAC Address: ${macAddress}`);
+  console.log(`Cities: ${cities.join(", ")}`);
+
+  res.status(200).json({
+    success: true,
+    message: `Cities updated for module ${macAddress}`,
+    cities: cities,
+  });
+});
+
+const sendCitiesToModule = (macAddress, cities) => {
+  const options = {
+    hostname: "localhost",
+    port: port,
+    path: "/internal/updateCities",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const http = require("http");
+  const req = http.request(options, (res) => {
+    let data = "";
+
+    res.on("data", (chunk) => {
+      data += chunk;
+    });
+
+    res.on("end", () => {
+      console.log(`Response from internal update: ${data}`);
+    });
+  });
+
+  req.on("error", (error) => {
+    console.error(`Error in internal update request: ${error}`);
+  });
+
+  req.write(JSON.stringify({ macAddress, cities }));
+  req.end();
+};
+
+app.post("/api/saveCities", (req, res) => {
+  const { macAddress, cities } = req.body;
+
+  if (!macAddress || !cities || !Array.isArray(cities)) {
+    return res.status(400).json({ error: "Invalid data" });
+  }
+
+  console.log(`MAC Address: ${macAddress}`);
+  console.log(`Selected Cities: ${cities.join(", ")}`);
+
+  savedData = { cities, macAddress};
+
+  res.status(200).json({
+    success: true,
+    message: "Cities saved successfully",
+    macAddress: macAddress,
+    cities: cities,
+    
+  });
+
+  sendCitiesToModule(macAddress, cities);
+});
+
+app.get("/api/getSavedCities", (req, res) => {
+  console.log("Returning saved data:", savedData);
+  res.status(200).json(savedData);
 });
 
 app.listen(port, "0.0.0.0", () => {
