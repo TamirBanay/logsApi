@@ -3,10 +3,8 @@ const mongoose = require("mongoose");
 const moduleModel = require("./mongoDB/Modules");
 const logsModel = require("./mongoDB/Logs");
 const citiesFilePath = "./cities.json";
-const favicon = "./images/favicon";
 const fs = require("fs");
 const path = require("path");
-const axios = require("axios");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,7 +25,7 @@ let macAddressTimeout;
 let lastPongMessage = {};
 let testType = "";
 const macAddressTimeouts = {};
-const lastVersion = "0.1.9";
+const lastVersion = "0.1.8";
 const connectionString =
   "mongodb+srv://banay9329:XfKyfKqWnEHImqXm@cluster0.f3a2v25.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true&tlsInsecure=true";
 
