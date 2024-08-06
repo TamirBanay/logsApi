@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # הפעל את שירות האינטרנט בעת הפעלת הקונטיינר
-CMD ["node", "api.js"]
+CMD ["node", "Api.js"]
