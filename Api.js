@@ -11,13 +11,21 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 const cors = require("cors");
 
-const corsOptions = {
-  origin: "*",
-  optionsSuccessStatus: 200,
-};
+// const corsOptions = {
+//   origin: "*",
+//   optionsSuccessStatus: 200,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+  })
+);
+
 let savedDataCities = {};
+
 let savedData = {};
 
 let macAddress = "";
@@ -299,14 +307,13 @@ app.post("/api/saveCities", (req, res) => {
   console.log(`MAC Address: ${macAddress}`);
   console.log(`Selected Cities: ${cities.join(", ")}`);
 
-  savedData = { cities, macAddress};
+  savedData = { cities, macAddress };
 
   res.status(200).json({
     success: true,
     message: "Cities saved successfully",
     macAddress: macAddress,
     cities: cities,
-    
   });
 
   sendCitiesToModule(macAddress, cities);
