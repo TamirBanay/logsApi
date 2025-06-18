@@ -1,14 +1,26 @@
 {
-  "name": "modules-apis",
+  "name": "alerm-system-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "ESP32 Alarm System API Server - Handles modules, logs, and city alerts",
+  "main": "Api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node Api.js"
+    "start": "node Api.js",
+    "dev": "node Api.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "esp32",
+    "alarm",
+    "alerts",
+    "iot",
+    "mongodb",
+    "express"
+  ],
+  "author": "ESP32 Alarm System",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
